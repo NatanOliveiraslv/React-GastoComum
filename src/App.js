@@ -2,8 +2,9 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
 import Container from './components/layout/container';
 import NavBar from './components/layout/navbar';
-import Login from './components/pages/login';
+import Login from './pages/login';
 import Footer from './components/layout/footer';
+import { PrivateRoute } from './routes/PrivateRoute';
 
 function App() {
   return (
