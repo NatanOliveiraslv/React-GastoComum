@@ -1,114 +1,177 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineEmail, MdOutlineLock, MdOutlinePerson } from "react-icons/md";
 import { register } from "../../services/auth";
+import { FcGoogle } from "react-icons/fc";
+
+import InputField from "../../components/form/input";
 
 function Register() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [erro, setError] = useState("");
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
+
+    setFirstNameError(!firstName.trim());
+    setLastNameError(!lastName.trim());
+    setEmailError(!email.trim());
+    setPasswordError(!password.trim());
+    setConfirmPasswordError(!confirmPassword.trim());
+
+
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim()
+    ) {
+      setError("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      setPasswordError(true);
+      setConfirmPasswordError(true);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const form = {
+      firstName,
+      lastName,
+      email,
+      login: email,
+      password,
+    };
+
     try {
-      await register(form); // <-- chama o service
-      alert("Usuário cadastrado com sucesso!");
-      navigate("/"); // Redireciona para login
+      await register(form);
+      alert("Cadastro realizado com sucesso!");
+      navigate("/");
     } catch (error) {
-      console.error("Erro ao cadastrar:", error);
-      alert("Erro ao cadastrar usuário.");
+      console.error("Erro ao cadastrar: ", error);
+      setError("Erro ao realizar o cadastro");
     }
   };
 
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-4">Create Account</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-none sm:bg-gray-100 px-4">
+      <div className="bg-white bg-none sm:shadow-md rounded-xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-2">Cadastre-se</h2>
+        <p className="text-center text-gray-500 mb-6">
+          Crie sua conta no Gasto Comum
+        </p>
+
+        {/* Botão Google */}
+        <button className="w-full border border-gray-300 flex items-center justify-center gap-2 py-2 rounded-md hover:bg-gray-100 text-black  mb-4">
+          <FcGoogle size={20} />
+          Continue pelo Google
+        </button>
+
+        {/* Divisor */}
+        <div className="flex items-center gap-4 mb-4">
+          <hr className="flex-1 border-gray-300" />
+          <span className="text-gray-400 text-sm">Or</span>
+          <hr className="flex-1 border-gray-300" />
+        </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
-          {/* Nome */}
-          <div>
-            <label className="text-sm text-gray-600">Name</label>
-            <div className="flex items-center border rounded-md px-3 py-2">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your name"
-                value={form.name}
-                onChange={handleChange}
-                className="w-full outline-none"
-              />
-              <MdOutlinePerson className="text-gray-400 ml-2" />
-            </div>
-          </div>
+          <InputField
+            label="Nome"
+            placeholder="Digite seu nome"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            error={firstNameError}
+          />
 
-          {/* Sobrenome */}
-          <div>
-            <label className="text-sm text-gray-600">Name</label>
-            <div className="flex items-center border rounded-md px-3 py-2">
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Your lastname"
-                value={form.name}
-                onChange={handleChange}
-                className="w-full outline-none"
-              />
-              <MdOutlinePerson className="text-gray-400 ml-2" />
-            </div>
-          </div>
+          <InputField
+            label="Sobrenome"
+            placeholder="Digite seu sobrenome"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            error={lastNameError}
+          />
 
-          {/* E-mail */}
-          <div>
-            <label className="text-sm text-gray-600">Email</label>
-            <div className="flex items-center border rounded-md px-3 py-2">
-              <input
-                type="email"
-                name="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={handleChange}
-                className="w-full outline-none"
-              />
-              <MdOutlineEmail className="text-gray-400 ml-2" />
-            </div>
-          </div>
+          <InputField
+            label="E-mail"
+            type="email"
+            placeholder="Digite seu e-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={emailError}
+          />
 
-          {/* Senha */}
-          <div>
-            <label className="text-sm text-gray-600">Password</label>
-            <div className="flex items-center border rounded-md px-3 py-2">
-              <input
-                type="password"
-                name="password"
-                placeholder="Create a strong password"
-                value={form.password}
-                onChange={handleChange}
-                className="w-full outline-none"
-              />
-              <MdOutlineLock className="text-gray-400 ml-2" />
-            </div>
-          </div>
+          <InputField
+            label="Senha"
+            type="password"
+            placeholder="Digite sua senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={passwordError}
+          />
 
-          {/* Botão */}
+          <InputField
+            label="Confirme sua senha"
+            type="password"
+            placeholder="Digite novamente sua senha"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={confirmPasswordError}
+          />
+
+          {/* Mensagem de erro */}
+          {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
+
+          {/* Botão cadastrar */}
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold !mt-10"
           >
-            Register
+            Cadastrar-se
           </button>
         </form>
 
         {/* Link para login */}
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Already have an account?{" "}
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Já tem uma conta?{" "}
           <a href="/" className="text-blue-600 hover:underline">
-            Login
+            Log in
           </a>
         </p>
+
+        {/* Termos 
+        <p className="text-center text-xs text-gray-400 mt-4">
+          By tapping Sign Up, you accept our{" "}
+          <a href="#" className="underline text-blue-600">
+            Terms and Conditions
+          </a>{" "}
+          and{" "}
+          <a href="#" className="underline text-blue-600">
+            Privacy Policy
+          </a>
+          .
+        </p>
+        */}
       </div>
     </div>
   );

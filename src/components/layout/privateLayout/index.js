@@ -1,16 +1,16 @@
 import { Outlet } from "react-router-dom";
 
-import NavBar from "../navbar";
+import BottomNav from "../bottomNav";
 import Footer from "../footer";
 import Container from "../container";
 
 const PrivateLayout = () => {
   return (
     <>
-      <NavBar />
       <Container customClass="min-heigth">
         <Outlet />
       </Container>
+      <BottomNav />
       <Footer />
     </>
   );
