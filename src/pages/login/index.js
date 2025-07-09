@@ -16,13 +16,13 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErro("");
-
+    
     try {
       await authenticate(login, password);
       navigate('/home');
     } catch (error) {
-      console.error(erro);
-      setErro("Login ou senha inválidos.");
+      console.error(error);
+      setErro("Login ou senha inválidos. " + error);
     }
   };
 
@@ -77,6 +77,9 @@ function Login() {
               Esqueceu sua senha?
             </span>
           </div>
+
+          {/* Mensagem de erro */}
+          {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
           
           {/* Login Button */}
             <button
