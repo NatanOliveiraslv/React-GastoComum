@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
-import { authenticate } from "../../services/auth";
+import { authenticate } from "../services/auth";
 import { GoLock, GoMail} from "react-icons/go";
 import { FcGoogle } from "react-icons/fc";
-
-import './Login.module.css'
 
 function Login() {
   const [login, setLogin] = useState("");

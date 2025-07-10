@@ -1,9 +1,8 @@
 import { Outlet } from "react-router-dom";
 
-import BottomNav from "../bottomNav";
-import Footer from "../footer";
-import Container from "../container";
-import TopBar from "../topBar";
+import BottomNav from "./BottomNav";
+import Container from "./Container";
+import TopBar from "./TopBar";
 
 const PrivateLayout = () => {
   return (

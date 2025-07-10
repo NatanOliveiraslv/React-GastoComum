@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Login from './pages/login';
-import Home from './pages/home';
-import PrivateLayout from './components/layout/privateLayout';
-import Register from './pages/register';
+import Login from './pages/Login';
+import Home from './pages/Home';
+import PrivateLayout from './components/layout/PrivateLayout';
+import Register from './pages/Register';
 import AddExpense from './pages/AddExpense';
 
 import { PrivateRoute } from './routes/PrivateRoute';

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../services/auth";
+import { register } from "../services/auth";
 import { FcGoogle } from "react-icons/fc";
 
-import InputField from "../../components/form/input";
+import InputField from "../components/form/input";
 
 function Register() {
   const [firstName, setFirstName] = useState("");

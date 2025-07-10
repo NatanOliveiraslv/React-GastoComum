@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { FiCalendar, FiUpload } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import { BsReceipt, BsPlus } from "react-icons/bs";
-import { MdOutlineFastfood, MdOutlineDirectionsCar, MdOutlineLightbulb, MdOutlineHome, MdOutlineMusicNote, MdOutlineFavoriteBorder, MdOutlineShoppingCart, MdOutlineSchool, MdOutlineFlight, MdMoreHoriz } from "react-icons/md";
-import { LuPencilLine, LuDollarSign  } from "react-icons/lu";
+import { LuPencilLine, LuDollarSign, LuCar, LuUtensils, LuLightbulb, LuHouse, LuPartyPopper, LuHeartPulse, LuShoppingCart, LuBook, LuPlane, LuEllipsis } from "react-icons/lu";
 
 const categories = [
-    { label: "Food", icon: <MdOutlineFastfood /> },
-    { label: "Transport", icon: <MdOutlineDirectionsCar /> },
-    { label: "Utilities", icon: <MdOutlineLightbulb /> },
-    { label: "Housing", icon: <MdOutlineHome /> },
-    { label: "Entertainment", icon: <MdOutlineMusicNote /> },
-    { label: "Health", icon: <MdOutlineFavoriteBorder /> },
-    { label: "Shopping", icon: <MdOutlineShoppingCart /> },
-    { label: "Education", icon: <MdOutlineSchool /> },
-    { label: "Travel", icon: <MdOutlineFlight /> },
-    { label: "Other", icon: <MdMoreHoriz /> }
+    { label: "Comida", icon: <LuUtensils size={16} /> },
+    { label: "Transporte", icon: <LuCar size={16} /> },
+    { label: "Utilitárias", icon: <LuLightbulb size={16} /> },
+    { label: "Casa", icon: <LuHouse size={16}/> },
+    { label: "Entretedimento", icon: <LuPartyPopper size={16} /> },
+    { label: "Saúde", icon: <LuHeartPulse size={16} /> },
+    { label: "Shopping", icon: <LuShoppingCart size={16} /> },
+    { label: "Educação", icon: <LuBook size={16} /> },
+    { label: "Viagem", icon: <LuPlane size={16} /> },
+    { label: "Outos", icon: <LuEllipsis size={16} /> }
 ];
 
 export default function AddExpense() {
@@ -46,43 +45,58 @@ export default function AddExpense() {
                         placeholder="0.00"
                         className="w-full pl-10 pr-3 py-2 border rounded-md text-sm placeholder-gray-400"
                     />
-                    <LuDollarSign  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <LuDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Enter the total amount spent.</p>
+                <p className="text-xs text-gray-500 mt-1">Insira o valor total do gasto.</p>
             </div>
 
             {/* Description */}
             <div className="mb-4">
-                <label className="block text-sm  mb-1">Description</label>
+                <label className="block text-sm  mb-1">Descrição</label>
                 <textarea
-                    placeholder="Briefly describe the expense..."
-                    className="w-full border rounded-md px-3 py-2"
+                    placeholder="Descreva brevemente a despesa..."
+                    className="h-32 w-full border rounded-md px-3 py-2"
                 ></textarea>
-                <p className="text-xs text-gray-500 mt-1">Optional: Add more context to this expense.</p>
+                <p className="text-xs text-gray-500 ">Opcional: adicione mais contexto a esta despesa.</p>
             </div>
 
             {/* Date */}
             <div className="mb-4">
-                <label className="block text-sm  mb-1">Date of Expense</label>
-                <div className="flex items-center border rounded-md px-3 py-2">
-                    <input type="date" className="w-full outline-none" />
-                    <FiCalendar className="text-gray-400 ml-2" />
+                <label className="block text-sm  mb-1">Data da despesa</label>
+                <div className="relative">
+                    <input
+                        type="date"
+                        className="
+                        w-full 
+                        pl-10 
+                        pr-3 
+                        py-2 
+                        border 
+                        rounded-md 
+                        bg-transparent
+                        text-sm 
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        appearance: none;"
+                    />
+
+                    <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
             </div>
 
             {/* Categories */}
             <div className="mb-4">
-                <label className="block text-sm  mb-2">Category</label>
+                <label className="block text-lg  mb-2">Category</label>
                 <div className="grid grid-cols-3 gap-3">
                     {categories.map((cat) => (
                         <button
                             key={cat.label}
                             type="button"
                             onClick={() => setSelectedCategory(cat.label)}
-                            className={`flex flex-col items-center justify-center border rounded-md p-2 text-sm text-gray-600 ${selectedCategory === cat.label ? "border-indigo-500 text-indigo-600" : ""}`}
+                            className={`flex flex-col items-center justify-center border rounded-md p-7 text-sm text-gray-600 ${selectedCategory === cat.label ? "border-indigo-500 text-indigo-600" : ""}`}
                         >
                             <div className="text-xl">{cat.icon}</div>
-                            {cat.label}
+                            <span className="text-xs">{cat.label}</span>
                         </button>
                     ))}
                 </div>
