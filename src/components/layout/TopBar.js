@@ -1,7 +1,7 @@
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-function TopBar({ title = "Add Expense" }) {
+function TopBar({ title = "Gasto Comum" }) {
   const navigate = useNavigate();
 
   return (

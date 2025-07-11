@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { FiCalendar } from "react-icons/fi";
-import { BsReceipt, BsPlus } from "react-icons/bs";
-import { LuPencilLine, LuDollarSign, LuCar, LuUtensils, LuLightbulb, LuHouse, LuPartyPopper, LuHeartPulse, LuShoppingCart, LuBook, LuPlane, LuEllipsis } from "react-icons/lu";
+import { LuPencilLine, LuDollarSign, LuCar, LuUtensils, LuLightbulb, LuHouse, LuPartyPopper, LuHeartPulse, LuShoppingCart, LuBook, LuPlane, LuEllipsis, LuUsers } from "react-icons/lu";
+import InputFile from "../components/form/InputFile";
 
 const categories = [
     { label: "Comida", icon: <LuUtensils size={16} /> },
     { label: "Transporte", icon: <LuCar size={16} /> },
     { label: "Utilitárias", icon: <LuLightbulb size={16} /> },
-    { label: "Casa", icon: <LuHouse size={16}/> },
+    { label: "Casa", icon: <LuHouse size={16} /> },
     { label: "Entretedimento", icon: <LuPartyPopper size={16} /> },
     { label: "Saúde", icon: <LuHeartPulse size={16} /> },
     { label: "Shopping", icon: <LuShoppingCart size={16} /> },
@@ -20,7 +20,7 @@ export default function AddExpense() {
     const [selectedCategory, setSelectedCategory] = useState("Food");
 
     return (
-        <div className="min-h-screen bg-white px-4 py-6">
+        <div className="min-h-screen bg-white px-4 py-6 overflow-y-auto pb-20">
             {/* Expense Title */}
             <div className="mb-4">
                 <p className="text-lg pb-5" >Detalhes da despesa</p>
@@ -86,14 +86,14 @@ export default function AddExpense() {
 
             {/* Categories */}
             <div className="mb-4">
-                <label className="block text-lg  mb-2">Category</label>
-                <div className="grid grid-cols-3 gap-3">
+                <label className="block text-lg  mb-2">Categoria</label>
+                <div className="grid grid-cols-3 gap-3 ">
                     {categories.map((cat) => (
                         <button
                             key={cat.label}
                             type="button"
                             onClick={() => setSelectedCategory(cat.label)}
-                            className={`flex flex-col items-center justify-center border rounded-md p-7 text-sm text-gray-600 ${selectedCategory === cat.label ? "border-indigo-500 text-indigo-600" : ""}`}
+                            className={`flex flex-col items-center justify-center border rounded-md p-7 text-sm text-gray-600 bg-[#F7F7F7] ${selectedCategory === cat.label ? "border-indigo-500 text-indigo-600" : ""}`}
                         >
                             <div className="text-xl">{cat.icon}</div>
                             <span className="text-xs">{cat.label}</span>
@@ -103,19 +103,18 @@ export default function AddExpense() {
             </div>
 
             {/* Receipt Upload */}
-            <div className="mb-6">
-                <label className="block text-sm  mb-1">Receipt</label>
-                <div className="border border-dashed border-gray-300 rounded-md p-4 text-center text-gray-500 text-sm">
-                    <BsReceipt className="mx-auto mb-2 text-xl" />
-                    Drag & drop files or <span className="text-blue-500 underline cursor-pointer">Browse</span>
-                    <p className="text-xs mt-1">Supported formats: JPG, PNG, PDF (max 5MB)</p>
-                </div>
-            </div>
+            <InputFile />
 
             {/* Add Participants */}
-            <button className="w-full border border-gray-300 text-sm flex items-center justify-center gap-2 py-2 rounded-md mb-4">
-                <BsPlus /> Add Participants
-            </button>
+
+            <div className="mb-4">
+                <div className="relative">
+                    <button className="w-full border py-4 gap-4 text-sm rounded-md">
+                        Adicionar participantes
+                    </button>
+                    <LuUsers className="absolute left-3 top-1/2 transform -translate-y-1/2" />
+                </div>
+            </div>
 
             {/* Add Expense Button */}
             <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-full ">

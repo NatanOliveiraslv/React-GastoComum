@@ -9,18 +9,24 @@ import AddExpense from './pages/AddExpense';
 import { PrivateRoute } from './routes/PrivateRoute';
 
 function App() {
+
   return (
     <Router>
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Login />} />
-          <Route element={<PrivateRoute />}>
-            <Route element={<PrivateLayout />}>
-              <Route path='/home' element={<Home />} />
-              <Route path='/addExpense' element={<AddExpense />} />
-            </Route>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Login />} />
+        <Route element={<PrivateRoute />}>
+
+          <Route element={<PrivateLayout title="Home" />}>
+            <Route path='/home' element={<Home />} />
           </Route>
-        </Routes>
+          
+          <Route element={<PrivateLayout title="Adicionar despesa" />}>
+            <Route path='/addExpense' element={<AddExpense />} />
+          </Route>
+
+        </Route>
+      </Routes>
     </Router>
   );
 }

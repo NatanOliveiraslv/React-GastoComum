@@ -4,10 +4,10 @@ import BottomNav from "./BottomNav";
 import Container from "./Container";
 import TopBar from "./TopBar";
 
-const PrivateLayout = () => {
+const PrivateLayout = ({title}) => {
   return (
     <>
-      <TopBar title="Adicionar despesa" />
+      <TopBar title={title} />
       <Container customClass="column">
         <Outlet />
       </Container>
