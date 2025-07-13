@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { register } from "../services/auth";
 import { FcGoogle } from "react-icons/fc";
 
-import InputField from "../components/form/input";
+import InputField from "../components/form/Input";
+import Button from "../components/form/Button"
 
 function Register() {
   const [firstName, setFirstName] = useState("");
@@ -76,7 +77,7 @@ function Register() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-none sm:bg-gray-100 px-4">
-      <div className="bg-white bg-none sm:shadow-md rounded-xl p-8 w-full max-w-md">
+      <div className="bg-white bg-none sm:shadow-md rounded-xl p-6 w-full max-w-md">
         <h2 className="text-3xl font-bold text-center mb-2">Cadastre-se</h2>
         <p className="text-center text-gray-500 mb-6">
           Crie sua conta no Gasto Comum
@@ -98,18 +99,24 @@ function Register() {
         <form onSubmit={handleRegister} className="space-y-4">
           <InputField
             label="Nome"
+            type="text"
             placeholder="Digite seu nome"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             error={firstNameError}
+            classLabel="text-sm text-gray-600" 
+            classInput="w-full border rounded-md px-3 py-2 bg-gray-100 outline-none transition-colors duration-200"
           />
 
           <InputField
             label="Sobrenome"
+            type="text"
             placeholder="Digite seu sobrenome"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             error={lastNameError}
+            classLabel="text-sm text-gray-600" 
+            classInput="w-full border rounded-md px-3 py-2 bg-gray-100 outline-none transition-colors duration-200"
           />
 
           <InputField
@@ -119,6 +126,8 @@ function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={emailError}
+            classLabel="text-sm text-gray-600" 
+            classInput="w-full border rounded-md px-3 py-2 bg-gray-100 outline-none transition-colors duration-200"
           />
 
           <InputField
@@ -128,6 +137,8 @@ function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={passwordError}
+            classLabel="text-sm text-gray-600" 
+            classInput="w-full border rounded-md px-3 py-2 bg-gray-100 outline-none transition-colors duration-200"
           />
 
           <InputField
@@ -137,19 +148,20 @@ function Register() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             error={confirmPasswordError}
+            classLabel="text-sm text-gray-600" 
+            classInput="w-full border rounded-md px-3 py-2 bg-gray-100 outline-none transition-colors duration-200"
           />
 
           {/* Mensagem de erro */}
           {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
 
           {/* Botão cadastrar */}
-          <button
-            type="submit"
+          <Button 
+            text="Cadastrar-se"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold !mt-10"
-          >
-            Cadastrar-se
-          </button>
+          />
         </form>
+        
 
         {/* Link para login */}
         <p className="text-center text-sm text-gray-600 mt-4">

@@ -1,7 +1,7 @@
 import { FiCamera, FiUpload, FiTrash2 } from "react-icons/fi";
 import { useRef, useState } from "react";
 
-function InputFile() {
+function InputFile({ onFileChange }) {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -16,12 +16,14 @@ function InputFile() {
     if (file) {
       setSelectedFile(file);
 
+
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviewUrl(reader.result);
         };
         reader.readAsDataURL(file);
+        if (onFileChange) onFileChange(file);
       } else {
         setPreviewUrl(null);
       }
@@ -32,8 +34,9 @@ function InputFile() {
     setSelectedFile(null);
     setPreviewUrl(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Limpa o input
+      fileInputRef.current.value = "";
     }
+    if (onFileChange) onFileChange(null); // 👈 avisa que não há mais arquivo
   };
 
   return (
