@@ -4,7 +4,7 @@ import { register } from "../services/auth";
 import { FcGoogle } from "react-icons/fc";
 
 import InputField from "../components/form/Input";
-import Button from "../components/form/Button"
+import SubmitButton from "../components/form/SubmitButton";
 
 function Register() {
   const [firstName, setFirstName] = useState("");
@@ -156,9 +156,9 @@ function Register() {
           {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
 
           {/* Botão cadastrar */}
-          <Button 
+          <SubmitButton 
             text="Cadastrar-se"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold !mt-10"
+            classButton="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold !mt-10"
           />
         </form>
         

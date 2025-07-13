@@ -7,6 +7,9 @@ import Register from './pages/Register';
 import AddExpense from './pages/AddExpense';
 
 import { PrivateRoute } from './routes/PrivateRoute';
+import Expenses from './pages/Expenses';
+import MySpending from './pages/MySpending';
+import Groups from './pages/Groups';
 
 function App() {
 
@@ -23,6 +26,18 @@ function App() {
           
           <Route element={<PrivateLayout title="Adicionar despesa" />}>
             <Route path='/addExpense' element={<AddExpense />} />
+          </Route>
+          
+          <Route element={<PrivateLayout title="Minhas despesas" />}>
+            <Route path='/expenses' element={<Expenses />} />
+          </Route>
+
+          <Route element={<PrivateLayout title="Lista de gastos" />}>
+            <Route path='/my-spending' element={<MySpending />} />
+          </Route>
+
+          <Route element={<PrivateLayout title="Lista de gastos" />}>
+            <Route path='/groups' element={<Groups />} />
           </Route>
 
         </Route>

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { authenticate } from "../services/auth";
-import { GoLock, GoMail} from "react-icons/go";
+import { GoLock, GoMail } from "react-icons/go";
 import { FcGoogle } from "react-icons/fc";
+import SubmitButton from "../components/form/SubmitButton";
 
 function Login() {
   const [login, setLogin] = useState("");
@@ -14,7 +15,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErro("");
-    
+
     try {
       await authenticate(login, password);
       navigate('/home');
@@ -78,14 +79,12 @@ function Login() {
 
           {/* Mensagem de erro */}
           {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
-          
+
           {/* Login Button */}
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold !mt-10"
-            >
-              Login
-            </button>
+          <SubmitButton
+            text="Login"
+            classButton="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-semibold !mt-10"
+          />
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-2">

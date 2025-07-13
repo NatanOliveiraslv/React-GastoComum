@@ -20,7 +20,7 @@ function BottomNav() {
         </NavLink>
 
         <NavLink
-          to="/meus-gastos"
+          to="/my-spending"
           className={({ isActive }) => `${linkClass} ${isActive ? activeClass : ""}`}
         >
           <BiWalletAlt   size={24} />
@@ -28,7 +28,7 @@ function BottomNav() {
         </NavLink>
 
         <NavLink
-          to="/grupos"
+          to="/groups"
           className={({ isActive }) => `${linkClass} ${isActive ? activeClass : ""}`}
         >
           <BiListUl size={24} />
@@ -36,7 +36,7 @@ function BottomNav() {
         </NavLink>
 
         <NavLink
-          to="/perfil"
+          to="/expenses"
           className={({ isActive }) => `${linkClass} ${isActive ? activeClass : ""}`}
         >
           <BiUser size={24} />
