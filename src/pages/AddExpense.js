@@ -68,6 +68,7 @@ const AddExpense = ({ expenseData }) => {
                     <InputField
                         label="Título da despesa"
                         type="text"
+                        name="title"
                         placeholder="Mercado, Aluguel..."
                         value={expense.title || ""}
                         onChange={handleChange}
@@ -133,7 +134,7 @@ const AddExpense = ({ expenseData }) => {
                                 type="button"
                                 onClick={() => {
                                     setSelectedType(cat.label);
-                                    setExpense((prev) => ({ ...prev, type: cat.label.toUpperCase() }));
+                                    setExpense((prev) => ({ ...prev, type: cat.label.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }));
                                 }}
                                 className={`flex flex-col items-center justify-center border rounded-md p-7 bg-[#F7F7F7] text-xs ${selectedType === cat.label
                                     ? "border-indigo-500 text-indigo-600"
