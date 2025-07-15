@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 
 import { FiCalendar } from "react-icons/fi";
@@ -16,8 +16,9 @@ const AddExpense = ({ expenseData }) => {
     const [expense, setExpense] = useState(expenseData || {});
     const [receipt, setReceipt] = useState(null);
     const [selectedType, setSelectedType] = useState("Comida");
+    
 
-    const categories = [
+    const type = [
         { label: "Comida", icon: <LuUtensils size={16} /> },
         { label: "Transporte", icon: <LuCar size={16} /> },
         { label: "Utilitárias", icon: <LuLightbulb size={16} /> },
@@ -30,11 +31,20 @@ const AddExpense = ({ expenseData }) => {
         { label: "Outros", icon: <LuEllipsis size={16} /> },
     ];
 
+    useEffect(() => {
+        if (!expense.type) {
+            setExpense((prev) => ({
+                ...prev,
+                type: selectedType.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+            }));
+        }
+    }, [selectedType, expense.type]);
+
     const createSpending = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append("data", JSON.stringify(expense));
+        formData.append("data", new Blob([JSON.stringify(expense)], { type: "application/json" }))
 
         if (receipt) {
             formData.append("voucher", receipt);
@@ -46,11 +56,10 @@ const AddExpense = ({ expenseData }) => {
             }
         }
         )
-            .then(resp => resp.json())
-            .then(() => {
-                navigate('/expenses', { state: { message: 'Desepsa cadastrada com sucesso' } });
-            })
-            .catch((err) => console.log(err))
+        .then(() => {
+            navigate('/my-spending', { state: { message: 'Desepsa cadastrada com sucesso' } });
+        })
+        .catch((err) => console.log(err))
 
     };
 
@@ -60,7 +69,7 @@ const AddExpense = ({ expenseData }) => {
 
     return (
         <div className="min-h-screen bg-white px-4 py-6 overflow-y-auto pb-24">
-            <form onSubmit={createSpending}>
+            <form encType="multipart/form-data" onSubmit={createSpending}>
                 <p className="text-lg mb-5">Detalhes da despesa</p>
 
                 {/* Título */}
@@ -97,8 +106,8 @@ const AddExpense = ({ expenseData }) => {
 
                 {/* Descrição */}
                 <div className="mb-4">
-                    
-                    <TextArea 
+
+                    <TextArea
                         description="Descrição"
                         classLabel="block text-sm mb-1"
                         name="description"
@@ -117,8 +126,8 @@ const AddExpense = ({ expenseData }) => {
                             type="date"
                             name="date"
                             className="w-full pl-10 pr-3 py-2 border rounded-md text-sm bg-transparent"
-                            value={expense.date || ""}
-                            onChange={handleChange}
+                            //value={expense.date || ""}
+                            //onChange={handleChange}
                         />
                         <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
@@ -128,21 +137,21 @@ const AddExpense = ({ expenseData }) => {
                 <div className="mb-4">
                     <label className="block text-lg mb-2">Categoria</label>
                     <div className="grid grid-cols-3 gap-3">
-                        {categories.map((cat) => (
+                        {type.map((type) => (
                             <button
-                                key={cat.label}
+                                key={type.label}
                                 type="button"
                                 onClick={() => {
-                                    setSelectedType(cat.label);
-                                    setExpense((prev) => ({ ...prev, type: cat.label.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }));
+                                    setSelectedType(type.label);
+                                    setExpense((prev) => ({ ...prev, type: type.label.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }));
                                 }}
-                                className={`flex flex-col items-center justify-center border rounded-md p-7 bg-[#F7F7F7] text-xs ${selectedType === cat.label
+                                className={`flex flex-col items-center justify-center border rounded-md p-7 bg-[#F7F7F7] text-xs ${selectedType === type.label
                                     ? "border-indigo-500 text-indigo-600"
                                     : "text-gray-600"
                                     }`}
                             >
-                                <div className="text-xl mb-1">{cat.icon}</div>
-                                {cat.label}
+                                <div className="text-xl mb-1">{type.icon}</div>
+                                {type.label}
                             </button>
                         ))}
                     </div>

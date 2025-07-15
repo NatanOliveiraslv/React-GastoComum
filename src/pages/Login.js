@@ -21,7 +21,7 @@ function Login() {
       navigate('/home');
     } catch (error) {
       console.error(error);
-      setErro("Login ou senha inválidos. " + error);
+      setErro("Login ou senha inválidos.");
     }
   };
 
