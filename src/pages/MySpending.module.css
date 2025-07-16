@@ -1,0 +1,49 @@
+.Comida{
+    color: #5D4108;
+    background-color: #EFB034 
+}
+
+.Transporte{
+    color: #FFFFFF;
+    background-color: #3D85C6
+}
+
+.Utilitárias{
+    color: #000000;
+    background-color: #A9A9A9 
+}
+
+.Casa{
+    color: #4B3F2F;
+    background-color: #C2B280
+}
+
+.Entretedimento{
+    color: #FFFFFF;
+    background-color: #FF69B4
+}
+
+.Saúde{
+    color: #1B5E20;
+    background-color: #8BC34A
+}
+
+.Shopping{
+    color: #FFC0CB;
+    background-color: #8B008B
+}
+
+.Educação{
+    color: #6A5ACD;
+    background-color: #FFFFFF
+}
+
+.Viagem{
+    color: #004D40;
+    background-color: #40E0D0
+}
+
+.Outros{
+    color: #D3D3D3;
+    background-color: #333333
+}

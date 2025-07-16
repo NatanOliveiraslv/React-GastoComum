@@ -8,6 +8,8 @@ import { getToken } from "../services/auth";
 import Loading from '../components/layout/Loading';
 import { Link } from "react-router-dom";
 
+import styles from './MySpending.module.css'
+
 
 const MySpending = () => {
 
@@ -49,7 +51,7 @@ const MySpending = () => {
                             className="border rounded-xl px-4 py-3 shadow-sm bg-white"
                         >
                             <div className="flex justify-between items-center">
-                                <span className="text-xs px-2 py-0.5 bg-yellow-400 text-white rounded-full font-medium">
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${styles[exp.type]}`}>
                                     {exp.type}
                                 </span>
                                 <span className="text-indigo-600 font-semibold">R$ {exp.value}</span>

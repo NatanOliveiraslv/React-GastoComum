@@ -1,4 +1,4 @@
-import loading from '../../img/loading.svg';
+import loading from '../../img/loading.webp';
 
 import styles from './Loading.module.css';
 
