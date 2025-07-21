@@ -5,11 +5,9 @@ import { FiCalendar } from "react-icons/fi";
 import { LuPencilLine, LuDollarSign, LuCar, LuUtensils, LuLightbulb, LuHouse, LuPartyPopper, LuHeartPulse, LuShoppingCart, LuBook, LuPlane, LuEllipsis, LuUsers } from "react-icons/lu";
 
 import InputFile from "../components/form/InputFile";
-import axios from '../services/api'
-import { getToken } from "../services/auth";
+import api from '../services/Api'
 import InputField from "../components/form/Input";
 import TextArea from "../components/form/TextArea"
-
 
 const AddExpense = ({ expenseData }) => {
     const navigate = useNavigate();
@@ -50,14 +48,11 @@ const AddExpense = ({ expenseData }) => {
             formData.append("voucher", receipt);
         }
 
-        await axios.post("/spending", formData, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        }
-        )
+        console.log(expense)
+
+        await api.post("/spending", formData)
         .then(() => {
-            navigate('/my-spending', { state: { message: 'Desepsa cadastrada com sucesso' } });
+            navigate('/my-spending', { state: { message: 'Despesa cadastrada com sucesso' } });
         })
         .catch((err) => console.log(err))
 

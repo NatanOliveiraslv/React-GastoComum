@@ -1,7 +1,14 @@
-// src/routes/PrivateRoute.jsx
+import React from 'react';
 import { Navigate, Outlet  } from "react-router-dom";
+import { useAuth } from '../contexts/AuthContext' 
+import Loading from '../components/layout/Loading';
 
-export function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
-  return token ? <Outlet /> : <Navigate to="/" />;
+export function PrivateRoute () {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <Loading />
+  }
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
 }

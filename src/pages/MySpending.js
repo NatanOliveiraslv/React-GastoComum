@@ -1,12 +1,11 @@
 import { GoCheckCircleFill } from "react-icons/go";
 import { FaCircleChevronRight } from "react-icons/fa6";
 
-
-import axios from '../services/api'
+import api from '../services/Api'
 import { useState, useEffect } from 'react';
-import { getToken } from "../services/auth";
 import Loading from '../components/layout/Loading';
 import { Link } from "react-router-dom";
+//import { useAuth } from '../contexts/AuthContext'; 
 
 import styles from './MySpending.module.css'
 
@@ -15,19 +14,11 @@ const MySpending = () => {
 
     const [removeLoading, setRemoveLoading] = useState(false);
     const [expenses, setExpenses] = useState([]);
-    /*
-    category: "Alimentação",
-        value: "R$ 75.00",
-        title: "Family Budget",
-        description: "Monthly expenses for the household including groceries and utilities.",
-        participants: "3/5"
-     */
+    //const { user } = useAuth();
 
     useEffect(() => {
-        axios
-            .get("/spending", {
-                headers: { Authorization: `Bearer ${getToken()}` },
-            })
+        api
+            .get("/spending")
             .then(({ data }) => {
                 setExpenses(data);    // ← dados já prontos
             })
@@ -37,8 +28,6 @@ const MySpending = () => {
             .finally(() => setRemoveLoading(true));
     }, []);
 
-    console.log(expenses)
-
     return (
         <div className="min-h-screen flex flex-col bg-white pb-12">
 
@@ -46,35 +35,37 @@ const MySpending = () => {
             {expenses.length > 0 && (
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                     {expenses.map((exp, index) => (
-                        <div
-                            key={index}
-                            className="border rounded-xl px-4 py-3 shadow-sm bg-white"
-                        >
-                            <div className="flex justify-between items-center">
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${styles[exp.type]}`}>
-                                    {exp.type}
-                                </span>
-                                <span className="text-indigo-600 font-semibold">R$ {exp.value}</span>
-                            </div>
-                            <div className="mt-2">
-                                <h2 className="font-semibold text-sm">{exp.title}</h2>
-                                <p className="text-sm text-gray-500 mt-1">{exp.description}</p>
-                            </div>
-                            <div className="flex justify-between items-center mt-3">
-
-                                <div className="flex items-center gap-1 text-green-600 text-sm">
-                                    {exp.totalParticipants > 0 && (
-                                        <>
-                                            <GoCheckCircleFill className="text-lg" />
-                                            <span>{exp.totalParticipants}</span>
-                                        </>
-                                    )
-                                    }
+                        <Link to={`/expense`}>
+                            <div
+                                key={index}
+                                className="border rounded-xl px-4 py-3 shadow-sm bg-white"
+                            >
+                                <div className="flex justify-between items-center">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${styles[exp.type]}`}>
+                                        {exp.type}
+                                    </span>
+                                    <span className="text-indigo-600 font-semibold">R$ {exp.value}</span>
                                 </div>
+                                <div className="mt-2">
+                                    <h2 className="font-semibold text-sm">{exp.title}</h2>
+                                    <p className="text-sm text-gray-500 mt-1">{exp.description}</p>
+                                </div>
+                                <div className="flex justify-between items-center mt-3">
 
-                                <FaCircleChevronRight className="text-indigo-500 text-xl" />
+                                    <div className="flex items-center gap-1 text-green-600 text-sm">
+                                        {exp.totalParticipants > 0 && (
+                                            <>
+                                                <GoCheckCircleFill className="text-lg" />
+                                                <span>{exp.totalParticipants}</span>
+                                            </>
+                                        )
+                                        }
+                                    </div>
+
+                                    <FaCircleChevronRight className="text-indigo-500 text-xl" />
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             )}

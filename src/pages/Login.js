@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
-import { authenticate } from "../services/auth";
 import { GoLock, GoMail } from "react-icons/go";
 import { FcGoogle } from "react-icons/fc";
+import { useAuth } from '../contexts/AuthContext';
+
 import SubmitButton from "../components/form/SubmitButton";
 
 function Login() {
-  const [login, setLogin] = useState("");
+  const { login } = useAuth();
+  const [username, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState("");
-
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -17,7 +18,7 @@ function Login() {
     setErro("");
 
     try {
-      await authenticate(login, password);
+      await login({username, password});
       navigate('/home');
     } catch (error) {
       console.error(error);
@@ -46,7 +47,7 @@ function Login() {
                 placeholder="seu.email@exemplo.com"
                 className="w-full outline-none"
                 onChange={(e) => setLogin(e.target.value)}
-                value={login}
+                value={username}
               />
               <GoMail className="text-gray-400 ml-2" size={25} />
             </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../services/auth";
+import { useAuth } from "../contexts/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 
 import InputField from "../components/form/Input";
@@ -12,7 +12,6 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [erro, setError] = useState("");
 
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
@@ -20,7 +19,9 @@ function Register() {
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
 
-  const navigate = useNavigate();
+  const [erro, setError] = useState("");
+  const { register } = useAuth();
+  const navigate = useNavigate();  
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -60,7 +61,7 @@ function Register() {
       firstName,
       lastName,
       email,
-      login: email,
+      userName: email,
       password,
     };
 
@@ -70,7 +71,7 @@ function Register() {
       navigate("/");
     } catch (error) {
       console.error("Erro ao cadastrar: ", error);
-      setError("Erro ao realizar o cadastro");
+      setError('Falha no cadastro. Por favor, tente um email ou nome de usuário diferente.');
     }
   };
 
