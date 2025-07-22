@@ -65,7 +65,6 @@ const AddExpense = ({ expenseData }) => {
     return (
         <div className="min-h-screen bg-white px-4 py-6 overflow-y-auto pb-24">
             <form encType="multipart/form-data" onSubmit={createSpending}>
-                <p className="text-lg mb-5">Detalhes da despesa</p>
 
                 {/* Título */}
                 <div className="mb-4">
