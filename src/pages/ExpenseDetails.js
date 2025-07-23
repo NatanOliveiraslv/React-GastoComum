@@ -3,55 +3,27 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { LuTag, LuText, LuDollarSign, LuAlignLeft, LuCalendar, LuUsers, LuReceipt } from "react-icons/lu";
 import ExpenseDetailCard from '../components/layout/ExpenseDetailCard';
 import UserAvatar from '../components/layout/UserAvatar';
+import api from '../services/Api'
+import Loading from '../components/layout/Loading';
 
 const ExpenseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [expense, setExpense] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [removeLoading, setRemoveLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchExpenseDetails = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Simulação de dados (substitua por uma chamada real à API)
-        // const response = await api.get(`/expenses/${id}`);
-        // setExpense(response.data);
-
-        // Dados de exemplo para o design
-        const mockExpenseData = {
-          id: id,
-          type: "Comida",
-          title: "Supermercado Mensal",
-          value: 345.50,
-          description: "Feira da semana no Supermercado Boa Esperança, inclui produtos de limpeza e alimentos perecíveis para a casa.",
-          date: "2024-10-23", // Formato YYYY-MM-DD
-          involvedUsers: [
-            { id: 1, name: "Luana Veiga", avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
-            { id: 2, name: "Marcelo Peres", avatar: "https://randomuser.me/api/portraits/men/1.jpg" },
-            { id: 3, name: "Carla Dias", avatar: "https://randomuser.me/api/portraits/women/2.jpg" },
-          ],
-          receiptUrl: "https://i.pravatar.cc/300", // Usando a imagem local de exemplo
-        };
-        setExpense(mockExpenseData);
-
-      } catch (err) {
-        console.error("Erro ao buscar detalhes da despesa:", err);
-        setError("Não foi possível carregar os detalhes da despesa.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExpenseDetails();
+    setError(null);
+    api.get(`/spending/${id}`)
+      .then(({ data }) => {
+        setExpense(data);    // ← dados já prontos
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar despesas:", err);
+      })
+      .finally(() => setRemoveLoading(true));
   }, [id]);
-
-  if (loading) {
-    return <div className="text-center p-12 text-lg text-gray-600">Carregando detalhes da despesa...</div>;
-  }
 
   if (error) {
     return <div className="text-center p-12 text-lg text-red-500">{error}</div>;
@@ -66,7 +38,7 @@ const ExpenseDetails = () => {
     currency: 'BRL',
   }).format(expense.value);
 
-  const formattedDate = new Date(expense.date).toLocaleDateString('pt-BR', {
+  const formattedDate = new Date(expense.registrationDate).toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -111,10 +83,10 @@ const ExpenseDetails = () => {
 
         <ExpenseDetailCard icon={<LuUsers size={24} />} label="Usuários Envolvidos">
           <div className="flex flex-col gap-2 mt-2">
-            {expense.involvedUsers.map(user => (
+            {expense.expensesDividedAcconts && expense.expensesDividedAcconts.map(user => (
               <div key={user.id} className="flex items-center gap-3">
-                <UserAvatar src={user.avatar} alt={user.name} />
-                <span className="text-base text-gray-800">{user.name}</span>
+                <UserAvatar src={user.avatar} alt={user.firstName} />
+                <span className="text-base text-gray-800">{user.firstName}</span>
               </div>
             ))}
           </div>
@@ -141,11 +113,14 @@ const ExpenseDetails = () => {
         {/* Botão de Ação Inferior */}
         <button
           onClick={handleAddRemoveUsers}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-sm font-semibold "
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold "
         >
           Atualizar despesa
         </button>
       </div>
+
+      {!removeLoading && <Loading />}
+
     </div>
   );
 };

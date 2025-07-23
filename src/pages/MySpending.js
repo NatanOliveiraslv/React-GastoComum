@@ -29,18 +29,18 @@ const MySpending = () => {
     }, []);
 
     return (
-        <div className="min-h-screen flex flex-col bg-white pb-12">
+        <div className="min-h-screen bg-white px-1 py-4 overflow-y-auto pb-24">
 
             {/* Content */}
             {expenses.length > 0 && (
-                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                <div className="space-y-4">
                     {expenses.map((exp, index) => (
                         //<Link to={`/expense`}>
                         <div
                             key={index}
                             className="border rounded-xl px-4 py-3 shadow-sm bg-white"
                         >
-                            <Link to="/expense">
+                            <Link to={`/expense/${exp.id}`}>
                                 <div className="flex justify-between items-center">
                                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${styles[exp.type]}`}>
                                         {exp.type}

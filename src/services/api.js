@@ -31,7 +31,7 @@ api.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // Marca esta requisição como retentada
 
-      const refreshToken = getRefreshToken('refreshToken');
+      const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
           const response = await axios.post('auth/refresh-token', { refreshToken });

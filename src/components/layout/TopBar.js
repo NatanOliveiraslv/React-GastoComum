@@ -7,7 +7,7 @@ function TopBar({ title = "Gasto Comum" }) {
 
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b">
-      <h1 className="text-lg font-semibold flex-1 text-center -ml-6">{title}</h1>
+      <h1 className="text-sm flex-1 text-center -ml-6">{title}</h1>
       <button onClick={() => navigate(-1)} className="absolute left-4 flex items-center space-x-4">
         <IoChevronBack />
       </button>

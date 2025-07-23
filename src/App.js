@@ -44,7 +44,7 @@ function App() {
             </Route>
 
             <Route element={<PrivateLayout title="Detalhes da Despesa" />}>
-              <Route path='/expense' element={<ExpenseDetails />} />
+              <Route path='/expense/:id' element={<ExpenseDetails />} />
             </Route>
 
           </Route>
