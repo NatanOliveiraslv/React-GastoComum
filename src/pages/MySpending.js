@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 //import { useAuth } from '../contexts/AuthContext'; 
 
 import styles from './MySpending.module.css'
+import FormattedValue from "../components/layout/FormattedValue";
 
 
 const MySpending = () => {
@@ -18,9 +19,9 @@ const MySpending = () => {
 
     useEffect(() => {
         api
-            .get("/spending")
+            .get("/spending?sort=createdAt,desc")
             .then(({ data }) => {
-                setExpenses(data);    // ← dados já prontos
+                setExpenses(data.content);    // ← dados já prontos
             })
             .catch((err) => {
                 console.error("Erro ao buscar despesas:", err);
@@ -45,7 +46,7 @@ const MySpending = () => {
                                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${styles[exp.type]}`}>
                                         {exp.type}
                                     </span>
-                                    <span className="text-indigo-600 font-semibold">R$ {exp.value}</span>
+                                    <span className="text-indigo-600 font-semibold"><FormattedValue value={exp.value} /></span>
                                 </div>
                                 <div className="mt-2">
                                     <h2 className="font-semibold text-sm">{exp.title}</h2>

@@ -75,7 +75,6 @@ function Register() {
     }
   };
 
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-none sm:bg-gray-100 px-4">
       <div className="bg-white bg-none sm:shadow-md rounded-xl p-6 w-full max-w-md">

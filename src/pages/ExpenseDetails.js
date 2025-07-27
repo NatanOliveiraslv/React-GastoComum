@@ -5,6 +5,8 @@ import ExpenseDetailCard from '../components/layout/ExpenseDetailCard';
 import UserAvatar from '../components/layout/UserAvatar';
 import api from '../services/Api'
 import Loading from '../components/layout/Loading';
+import FormattedValue from '../components/layout/FormattedValue';
+import File from '../components/layout/File';
 
 const ExpenseDetails = () => {
   const { id } = useParams();
@@ -33,22 +35,17 @@ const ExpenseDetails = () => {
     return <div className="text-center p-12 text-lg text-gray-600">Nenhum detalhe de despesa encontrado.</div>;
   }
 
-  const formattedValue = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(expense.value);
-
-  const formattedDate = new Date(expense.registrationDate).toLocaleDateString('pt-BR', {
+  const formattedDate = new Date(expense.dateSpending).toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
   });
 
-  const handleViewReceipt = () => {
-    if (expense.receiptUrl) {
-      window.open(expense.receiptUrl, '_blank');
-    }
-  };
+  // const handleViewReceipt = () => {
+  //   if (receiptUrl) {
+  //     window.open(expense.receiptUrl, '_blank');
+  //   }
+  // };
 
   const handleAddRemoveUsers = () => {
     console.log("Abrir funcionalidade Adicionar/Remover Usuários");
@@ -70,7 +67,7 @@ const ExpenseDetails = () => {
         </ExpenseDetailCard>
 
         <ExpenseDetailCard icon={<LuDollarSign size={24} />} label="Valor">
-          <p className="font-semibold text-blue-600">{formattedValue}</p> {/* Cor azul no valor */}
+          <p className="font-semibold text-blue-600"><FormattedValue value={expense.value} /></p> {/* Cor azul no valor */}
         </ExpenseDetailCard>
 
         <ExpenseDetailCard icon={<LuAlignLeft size={24} />} label="Descrição">
@@ -92,20 +89,16 @@ const ExpenseDetails = () => {
           </div>
         </ExpenseDetailCard>
 
-        {expense.receiptUrl && (
+        {expense.voucher && (
           <ExpenseDetailCard icon={<LuReceipt size={24} />} label="Comprovante de Pagamento">
             <div className="flex flex-col items-center mt-2">
-              <img
-                src={expense.receiptUrl}
-                alt="Comprovante de Pagamento"
-                className="max-w-full h-auto rounded-lg mb-4 shadow-md"
-              />
-              <button
+              <File fileName={expense.voucher.systemFileName}/>
+              {/* <button
                 onClick={handleViewReceipt}
                 className="w-full bg-violet-700 text-white py-3 px-6 rounded-lg text-base font-medium hover:bg-violet-800 transition-colors"
               >
                 Ver Comprovante
-              </button>
+              </button> */}
             </div>
           </ExpenseDetailCard>
         )}

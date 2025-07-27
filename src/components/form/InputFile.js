@@ -1,4 +1,4 @@
-import { FiCamera, FiUpload, FiTrash2 } from "react-icons/fi";
+import { FiCamera, FiUpload, FiTrash2, FiFileText } from "react-icons/fi";
 import { useRef, useState } from "react";
 
 function InputFile({ onFileChange }) {
@@ -15,17 +15,24 @@ function InputFile({ onFileChange }) {
 
     if (file) {
       setSelectedFile(file);
+      onFileChange(file); // Chama onFileChange aqui, já que o arquivo foi selecionado
 
-
+      // Lógica de pré-visualização
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviewUrl(reader.result);
         };
         reader.readAsDataURL(file);
-        if (onFileChange) onFileChange(file);
+      } else if (file.type === "application/pdf") {
+        setPreviewUrl(null); // Não há pré-visualização de imagem, mas temos um arquivo
       } else {
+        // Para outros tipos de arquivo não suportados
         setPreviewUrl(null);
+        setSelectedFile(null);
+        alert("Formato de arquivo não suportado.");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        onFileChange(null);
       }
     }
   };
@@ -36,14 +43,14 @@ function InputFile({ onFileChange }) {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    if (onFileChange) onFileChange(null); // 👈 avisa que não há mais arquivo
+    if (onFileChange) onFileChange(null);
   };
 
   return (
     <div className="mt-6 mb-4">
-      <h2 className="text-base font-semibold mb-2">Receipt</h2>
+      <h2 className="text-base font-semibold mb-2">Comprovante</h2>
       <div className="border rounded-xl p-4 bg-white">
-
+        
         <div className="flex items-center justify-between mb-4">
           <FiCamera className="text-gray-400" />
         </div>
@@ -82,13 +89,18 @@ function InputFile({ onFileChange }) {
               </p>
 
               {previewUrl ? (
+                // Exibe a pré-visualização da imagem
                 <img
                   src={previewUrl}
                   alt="Preview"
                   className="mx-auto max-h-48 rounded-md shadow mb-2"
                 />
               ) : (
-                <p className="text-sm text-gray-600 mb-2">{selectedFile.name}</p>
+                // Exibe o ícone e o nome do arquivo para PDFs ou outros
+                <div className="flex flex-col items-center">
+                  <FiFileText className="text-4xl text-gray-500 mb-2" />
+                  <p className="text-sm text-gray-600 mb-2 font-medium">{selectedFile.name}</p>
+                </div>
               )}
 
               <button

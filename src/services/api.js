@@ -2,7 +2,7 @@ import axios from 'axios';
 import { setAccessToken, setRefreshToken, removeAccessToken, removeRefreshToken, getAccessToken, getRefreshToken } from '../services/AuthClientStore'
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.13:8080'// Substitua pela URL da sua API de backend
+  baseURL: process.env.REACT_APP_BASE_URL
 });
 
 // Interceptor de Requisição: Anexar token de acesso

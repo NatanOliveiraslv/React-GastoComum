@@ -118,10 +118,10 @@ const AddExpense = ({ expenseData }) => {
                     <div className="relative">
                         <input
                             type="date"
-                            name="date"
+                            name="dateSpending"
                             className="w-full pl-10 pr-3 py-2 border rounded-md text-sm bg-transparent"
-                            //value={expense.date || ""}
-                            //onChange={handleChange}
+                            value={expense.dateSpending || ""}
+                            onChange={handleChange}
                         />
                         <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
