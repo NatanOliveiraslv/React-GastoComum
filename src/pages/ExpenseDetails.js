@@ -7,6 +7,7 @@ import api from '../services/Api'
 import Loading from '../components/layout/Loading';
 import FormattedValue from '../components/layout/FormattedValue';
 import File from '../components/layout/File';
+import SubmitButton from '../components/form/SubmitButton';
 
 const ExpenseDetails = () => {
   const { id } = useParams();
@@ -32,7 +33,7 @@ const ExpenseDetails = () => {
   }
 
   if (!expense) {
-    return <div className="text-center p-12 text-lg text-gray-600">Nenhum detalhe de despesa encontrado.</div>;
+    return <Loading />;
   }
 
   const formattedDate = new Date(expense.dateSpending).toLocaleDateString('pt-BR', {
@@ -40,12 +41,6 @@ const ExpenseDetails = () => {
     month: 'long',
     year: 'numeric',
   });
-
-  // const handleViewReceipt = () => {
-  //   if (receiptUrl) {
-  //     window.open(expense.receiptUrl, '_blank');
-  //   }
-  // };
 
   const handleAddRemoveUsers = () => {
     console.log("Abrir funcionalidade Adicionar/Remover Usuários");
@@ -74,10 +69,11 @@ const ExpenseDetails = () => {
           <p className="text-base">{expense.description}</p>
         </ExpenseDetailCard>
 
-        <ExpenseDetailCard icon={<LuCalendar size={24} />} label="Data de Registro">
+        <ExpenseDetailCard icon={<LuCalendar size={24} />} label="Data da despesa">
           <p className="text-base">{formattedDate}</p>
         </ExpenseDetailCard>
 
+        {expense.expensesDividedAcconts && expense.expensesDividedAcconts.length > 0 && (
         <ExpenseDetailCard icon={<LuUsers size={24} />} label="Usuários Envolvidos">
           <div className="flex flex-col gap-2 mt-2">
             {expense.expensesDividedAcconts && expense.expensesDividedAcconts.map(user => (
@@ -88,28 +84,22 @@ const ExpenseDetails = () => {
             ))}
           </div>
         </ExpenseDetailCard>
+        )}
 
         {expense.voucher && (
           <ExpenseDetailCard icon={<LuReceipt size={24} />} label="Comprovante de Pagamento">
             <div className="flex flex-col items-center mt-2">
               <File fileName={expense.voucher.systemFileName}/>
-              {/* <button
-                onClick={handleViewReceipt}
-                className="w-full bg-violet-700 text-white py-3 px-6 rounded-lg text-base font-medium hover:bg-violet-800 transition-colors"
-              >
-                Ver Comprovante
-              </button> */}
             </div>
           </ExpenseDetailCard>
         )}
 
         {/* Botão de Ação Inferior */}
-        <button
+        <SubmitButton
           onClick={handleAddRemoveUsers}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold "
-        >
-          Atualizar despesa
-        </button>
+          classButton="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold "
+          text="Atualizar despesa"
+        />
       </div>
 
       {!removeLoading && <Loading />}

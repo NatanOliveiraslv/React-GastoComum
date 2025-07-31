@@ -1,10 +1,13 @@
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { FiBell } from "react-icons/fi";
+import { useAuth } from '../../contexts/AuthContext';
 
 function TopBar({ title = "Gasto Comum" }) {
   const navigate = useNavigate();
-
+  const { user } = useAuth();
+  const profilePictureUrl = `${process.env.REACT_APP_BASE_URL}/user/profile-picture/download/${user.id}`
+  
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b">
       <h1 className="text-sm flex-1 text-center -ml-6">{title}</h1>
@@ -15,7 +18,7 @@ function TopBar({ title = "Gasto Comum" }) {
         <FiBell className="text-xl text-gray-600" />
         <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
           <img
-            src="https://i.pravatar.cc/300"
+            src={profilePictureUrl}
             alt="User"
             className="w-full h-full object-cover"
           />

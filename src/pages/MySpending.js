@@ -36,7 +36,6 @@ const MySpending = () => {
             {expenses.length > 0 && (
                 <div className="space-y-4">
                     {expenses.map((exp, index) => (
-                        //<Link to={`/expense`}>
                         <div
                             key={index}
                             className="border rounded-xl px-4 py-3 shadow-sm bg-white"
@@ -58,7 +57,7 @@ const MySpending = () => {
                                         {exp.totalParticipants > 0 && (
                                             <>
                                                 <GoCheckCircleFill className="text-lg" />
-                                                <span>{exp.totalParticipants}</span>
+                                                <span>{exp.totalParticipants}/{exp.totalPayingCustomers}</span>
                                             </>
                                         )
                                         }

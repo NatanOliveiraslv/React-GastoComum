@@ -12,7 +12,7 @@ const File = ({ fileName }) => {
             <img
               src={receiptUrl}
               alt="Comprovante"
-              style={{ maxWidth: '100%', height: 'auto', border: '1px solid #ccc' }}
+              style={{ maxWidth: '100%', height: '300px', border: '1px solid #ccc' }}
             />
           )}
 

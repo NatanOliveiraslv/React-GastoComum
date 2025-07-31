@@ -1,107 +1,134 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
-import api from '../services/Api'; // Sua instância do Axios
-import { jwtDecode } from 'jwt-decode'; // Para decodificar JWTs
+import api from '../services/Api';
+import { jwtDecode } from 'jwt-decode'; 
 import { setAccessToken, setRefreshToken, removeAccessToken, removeRefreshToken, getAccessToken } from '../services/AuthClientStore'
 import Loading from '../components/layout/Loading';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // Armazenará os dados do usuário do /api/user/me
   const [loading, setLoading] = useState(true);
 
-  // Função para salvar tokens no localStorage
-  const saveTokens = (accessToken, refreshToken) => {
+  const saveTokens = useCallback((accessToken, refreshToken) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
-  };
+  }, []);
 
-  // Função para remover tokens do localStorage
-  const removeTokens = () => {
-    removeAccessToken()
-    removeRefreshToken()
-  };
+  const removeTokens = useCallback(() => {
+    removeAccessToken();
+    removeRefreshToken();
+  }, []);
 
-  // Função para decodificar e definir o usuário com base no token de acesso
-  const decodeAndSetUser = useCallback((token) => {
+  const fetchUserDetails = useCallback(async () => {
+    try {
+      const response = await api.get('/user/me'); 
+      setUser(response.data); 
+    } catch (error) {
+      console.error("Falha ao buscar detalhes do usuário:", error);
+      setUser(null);
+      removeTokens();
+      throw error;
+    }
+  }, [removeTokens]);
 
+  const decodeAndSetUser = useCallback(async (token) => {
     if (typeof token === 'string' && token.length > 0) {
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded); // Assumindo que seu JWT contém dados do usuário
+        if (decoded.exp * 1000 < Date.now()) {
+          console.warn("Token expirado. Tentando refresh ou solicitando login novamente.");
+          setUser(null);
+          removeTokens();
+          return;
+        }
+
+        // Se o token é válido e não expirado, busque os detalhes completos do usuário
+        await fetchUserDetails(); // Chama a função que busca no backend
       } catch (error) {
-        console.error("Falha ao decodificar token:", error);
+        console.error("Falha ao decodificar ou validar token:", error);
         setUser(null);
         removeTokens();
       }
     } else {
       setUser(null);
+      removeTokens(); // Remove tokens se o token for inválido/nulo
     }
-  }, []);
+  }, [fetchUserDetails, removeTokens]); // fetchUserDetails como dependência
 
-  // Função de Login envolvida em useCallback
   const login = useCallback(async (credentials) => {
     try {
       const response = await api.post('/auth/sign-in', credentials);
       const { accessToken, refreshToken } = response.data;
       saveTokens(accessToken, refreshToken);
-      decodeAndSetUser(accessToken);
+      await decodeAndSetUser(accessToken); 
       return true;
     } catch (error) {
       console.error("Falha no login:", error);
       removeTokens();
       setUser(null);
-      throw error; // Re-lança para permitir que o componente lide com erros
+      throw error;
     }
-  }, [decodeAndSetUser]);
+  }, [decodeAndSetUser, saveTokens, removeTokens]);
 
-  // Função de Cadastro (Register)
   const register = useCallback(async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
-      // ToDo
+      // Sua lógica atual é retornar true se o status for 200.
+      // Se o registro também retorna tokens e você quer logar o usuário automaticamente:
       // if (response.data.accessToken && response.data.refreshToken) {
       //   const { accessToken, refreshToken } = response.data;
       //   saveTokens(accessToken, refreshToken);
-      //   decodeAndSetUser(accessToken);
+      //   await decodeAndSetUser(accessToken);
+      //   return true;
       // }
-      if (response.status === "200") {
+      if (response.status === 200 || response.status === 201) { 
         return true;
       }
+      return false;
     } catch (error) {
       console.error("Falha no cadastro:", error);
       throw error;
     }
   }, []);
 
-  // Função de Logout
-  const logout = useCallback(() => {
-    removeTokens();
-    setUser(null);
-    api.post('/auth/logout').catch(error => console.error("Erro no logout do servidor:", error));
-  }, []);
-
-  // Inicializa o estado de autenticação ao montar o componente
-  useEffect(() => {
-    const accessToken = getAccessToken()
-    if (accessToken) {
-      decodeAndSetUser(accessToken);
+  const logout = useCallback(async () => { // Torne async para await o post
+    try {
+      await api.post('/auth/logout'); // Envia o logout para o backend
+    } catch (error) {
+      console.error("Erro no logout do servidor:", error);
+      // Mesmo com erro no servidor, limpamos o estado local para deslogar o usuário
+    } finally {
+      removeTokens();
+      setUser(null);
     }
-    setLoading(false);
-  }, [decodeAndSetUser]);
+  }, [removeTokens]);
 
-  // Memoriza o valor do contexto para evitar re-renderizações desnecessárias
+  // Efeito principal para inicializar o estado de autenticação
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true);
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        await decodeAndSetUser(accessToken); // Chama a função async
+      }
+      setLoading(false);
+    };
+
+    initializeAuth();
+  }, [decodeAndSetUser]); // Dependência: decodeAndSetUser
+
   const contextValue = React.useMemo(() => ({
     user,
-    loading,
+    loading, // loading para o estado inicial de autenticação
     login,
     logout,
     register,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user && !loading, // Considera autenticado se houver user e não estiver mais carregando
   }), [user, loading, login, logout, register]);
 
   if (loading) {
-    return <Loading />
+    return <Loading />; // Exibe um componente de loading enquanto o AuthProvider está inicializando
   }
 
   return (
@@ -111,7 +138,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook customizado para usar o AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import PrivateLayout from './components/layout/PrivateLayout'; 
+import PrivateLayout from './components/layout/PrivateLayout';
 
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -12,6 +12,7 @@ import Expenses from './pages/Expenses';
 import MySpending from './pages/MySpending';
 import Groups from './pages/Groups';
 import ExpenseDetails from './pages/ExpenseDetails';
+import AddUsersToExpense from './pages/AddUsersToExpense';
 
 function App() {
   return (
@@ -45,6 +46,10 @@ function App() {
 
             <Route element={<PrivateLayout title="Detalhes da Despesa" />}>
               <Route path='/expense/:id' element={<ExpenseDetails />} />
+            </Route>
+
+            <Route element={<PrivateLayout title={"Adicionar participante"} hideHeader={true} />}>
+              <Route path="/add-users-to-expense" element={<AddUsersToExpense />} />
             </Route>
 
           </Route>
