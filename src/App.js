@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateLayout from './components/layout/PrivateLayout';
@@ -10,7 +9,7 @@ import AddExpense from './pages/AddExpense';
 import { PrivateRoute } from './routes/PrivateRoute';
 import Expenses from './pages/Expenses';
 import MySpending from './pages/MySpending';
-import Groups from './pages/Groups';
+import GroupListPage from './pages/GroupListPage';
 import ExpenseDetails from './pages/ExpenseDetails';
 import AddUsersToExpense from './pages/AddUsersToExpense';
 
@@ -40,15 +39,15 @@ function App() {
               <Route path='/my-spending' element={<MySpending />} />
             </Route>
 
-            <Route element={<PrivateLayout title="Lista de gastos" />}>
-              <Route path='/groups' element={<Groups />} />
+            <Route element={<PrivateLayout title="Lista de grupos" />}>
+              <Route path='/groups' element={<GroupListPage />} />
             </Route>
 
             <Route element={<PrivateLayout title="Detalhes da Despesa" />}>
               <Route path='/expense/:id' element={<ExpenseDetails />} />
             </Route>
 
-            <Route element={<PrivateLayout title={"Adicionar participante"} hideHeader={true} />}>
+            <Route element={<PrivateLayout title={"Adicionar participante"} hideHeader={true} bottomNav={false} />}>
               <Route path="/add-users-to-expense" element={<AddUsersToExpense />} />
             </Route>
 

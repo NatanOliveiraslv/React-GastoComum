@@ -4,14 +4,14 @@ import BottomNav from "./BottomNav";
 import Container from "./Container";
 import TopBar from "./TopBar";
 
-const PrivateLayout = ({title}) => {
+const PrivateLayout = ({title, bottomNav = true}) => {
   return (
     <>
       <TopBar title={title} />
       <Container customClass="column">
         <Outlet />
       </Container>
-      <BottomNav />
+      {bottomNav && <BottomNav />}
     </>
   );
 };

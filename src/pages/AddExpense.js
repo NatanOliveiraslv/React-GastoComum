@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom" // Importe useLocation para pegar o state
+import { useState, useEffect, useCallback } from "react"; // Importe useCallback
+import { useNavigate, useLocation } from "react-router-dom"
 
 import { FiCalendar } from "react-icons/fi";
 import { LuPencilLine, LuDollarSign, LuCar, LuUtensils, LuLightbulb, LuHouse, LuPartyPopper, LuHeartPulse, LuShoppingCart, LuBook, LuPlane, LuEllipsis, LuUsers } from "react-icons/lu";
@@ -13,12 +13,49 @@ import SubmitButtonWatcher from "../components/form/SubmitButtonWatcher";
 const AddExpense = ({ expenseData }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    
-    const [expense, setExpense] = useState(expenseData || {});
-    const [receipt, setReceipt] = useState(null);
-    const [selectedType, setSelectedType] = useState("Comida");
-    const [selectedParticipantIds, setSelectedParticipantIds] = useState([]);
-    const [selectedParticipantNames, setSelectedParticipantNames] = useState([]);
+
+
+    const LOCAL_STORAGE_KEY = 'addExpenseFormData';
+
+    const [expense, setExpense] = useState(() => {
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            // Combine com expenseData se houver (para modo de edição)
+            return savedData ? { ...expenseData, ...JSON.parse(savedData) } : (expenseData || {});
+        } catch (error) {
+            console.error("Erro ao carregar dados do localStorage:", error);
+            return expenseData || {};
+        }
+    });
+
+    const [receipt, setReceipt] = useState(null); // Receipt geralmente não é salvo no localStorage diretamente
+    const [selectedType, setSelectedType] = useState(() => {
+        // Tente carregar o tipo selecionado do localStorage ou defina um padrão
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            return savedData ? (JSON.parse(savedData).selectedType || "Comida") : "Comida";
+        } catch (error) {
+            return "Comida";
+        }
+    });
+    const [selectedParticipantIds, setSelectedParticipantIds] = useState(() => {
+        // Tente carregar IDs dos participantes do localStorage
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            return savedData ? (JSON.parse(savedData).selectedParticipantIds || []) : [];
+        } catch (error) {
+            return [];
+        }
+    });
+    const [selectedParticipantNames, setSelectedParticipantNames] = useState(() => {
+        // Tente carregar nomes dos participantes do localStorage
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            return savedData ? (JSON.parse(savedData).selectedParticipantNames || []) : [];
+        } catch (error) {
+            return [];
+        }
+    });
 
     const type = [
         { label: "Comida", icon: <LuUtensils size={16} /> },
@@ -34,6 +71,17 @@ const AddExpense = ({ expenseData }) => {
     ];
 
     useEffect(() => {
+        const formDataToSave = {
+            ...expense,
+            selectedType: selectedType,
+            selectedParticipantIds: selectedParticipantIds,
+            selectedParticipantNames: selectedParticipantNames,
+        };
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formDataToSave));
+    }, [expense, selectedType, selectedParticipantIds, selectedParticipantNames]);
+
+
+    useEffect(() => {
         if (!expense.type) {
             setExpense((prev) => ({
                 ...prev,
@@ -47,7 +95,7 @@ const AddExpense = ({ expenseData }) => {
             const { selectedIds, selectedNames } = location.state.selectedUsers;
             setSelectedParticipantIds(selectedIds);
             setSelectedParticipantNames(selectedNames);
-            // Limpar o state da localização para evitar re-execução indesejada em futuras navegações
+
             navigate(location.pathname, { replace: true, state: {} });
         }
     }, [location.state, navigate, location.pathname]);
@@ -56,11 +104,9 @@ const AddExpense = ({ expenseData }) => {
     const createSpending = async (e) => {
         e.preventDefault();
 
-        // Adiciona os IDs dos participantes ao objeto expense antes de enviar
         const expenseWithParticipants = {
             ...expense,
-            // Certifique-se de que o nome deste campo corresponda ao que seu backend espera para os participantes
-            participantIds: selectedParticipantIds 
+            participantIds: selectedParticipantIds
         };
 
         const formData = new FormData();
@@ -70,26 +116,28 @@ const AddExpense = ({ expenseData }) => {
             formData.append("voucher", receipt);
         }
 
-        console.log("Dados da despesa a serem enviados:", expenseWithParticipants); 
+        console.log("Dados da despesa a serem enviados:", expenseWithParticipants);
 
         try {
             await api.post("/spending", formData)
+            // Limpar dados do localStorage após o sucesso da submissão
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
             navigate('/my-spending', { state: { message: 'Despesa cadastrada com sucesso' } });
         } catch (err) {
             console.error("Erro ao cadastrar despesa:", err);
-            // Adicione uma mensagem de erro para o usuário
             alert("Erro ao cadastrar despesa. Por favor, tente novamente.");
         }
     };
 
 
-    const handleChange = (e) =>
-        setExpense({ ...expense, [e.target.name]: e.target.value });
+    const handleChange = useCallback((e) => { // Use useCallback para otimização
+        setExpense((prevExpense) => ({ ...prevExpense, [e.target.name]: e.target.value }));
+    }, []);
 
-    const handleAddParticipantsClick = () => {
-        // Navega para a tela de seleção de usuários
+    const handleAddParticipantsClick = useCallback(() => { // Use useCallback
         navigate('/add-users-to-expense', { state: { initialSelectedIds: selectedParticipantIds } });
-    };
+    }, [navigate, selectedParticipantIds]);
+
 
     return (
         <div className="min-h-screen bg-white px-1 py-4 overflow-y-auto pb-24">
@@ -210,8 +258,9 @@ const AddExpense = ({ expenseData }) => {
                 <SubmitButtonWatcher
                     classButton="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-full font-semibold"
                     text="Adicionar despesa"
+                    onClick={createSpending}
                 />
-                    
+
             </form>
         </div>
     );

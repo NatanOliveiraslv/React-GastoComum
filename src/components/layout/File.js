@@ -1,7 +1,7 @@
 import { FaRegFilePdf } from "react-icons/fa6";
 
-const File = ({ fileName }) => { 
-  const receiptUrl = `${process.env.REACT_APP_BASE_URL}/spending/voucher/download/${fileName}` 
+const File = ({ fileName }) => {
+  const receiptUrl = `${process.env.REACT_APP_BASE_URL}/spending/voucher/download/${fileName}`
 
   return (
     <div>
@@ -12,7 +12,7 @@ const File = ({ fileName }) => {
             <img
               src={receiptUrl}
               alt="Comprovante"
-              style={{ maxWidth: '100%', height: '300px', border: '1px solid #ccc' }}
+              style={{ maxWidth: '100%', maxHeight: '300px', border: '1px solid #ccc', objectFit: 'contain' }}
             />
           )}
 

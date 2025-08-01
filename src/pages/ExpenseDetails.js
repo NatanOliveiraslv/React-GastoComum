@@ -76,10 +76,10 @@ const ExpenseDetails = () => {
         {expense.expensesDividedAcconts && expense.expensesDividedAcconts.length > 0 && (
         <ExpenseDetailCard icon={<LuUsers size={24} />} label="Usuários Envolvidos">
           <div className="flex flex-col gap-2 mt-2">
-            {expense.expensesDividedAcconts && expense.expensesDividedAcconts.map(user => (
-              <div key={user.id} className="flex items-center gap-3">
-                <UserAvatar src={user.avatar} alt={user.firstName} />
-                <span className="text-base text-gray-800">{user.firstName}</span>
+            {expense.expensesDividedAcconts && expense.expensesDividedAcconts.map(participant => (
+              <div key={participant.userId} className="flex items-center gap-3">
+                <UserAvatar userId={participant.userId} alt={participant.userFirstName} />
+                <span className="text-base text-gray-800">{participant.userFirstName}</span>
               </div>
             ))}
           </div>
