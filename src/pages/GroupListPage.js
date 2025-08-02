@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LuPlus } from 'react-icons/lu';
-import GroupCard from '../components/layout/GroupCard'
+import { LuCirclePlus } from "react-icons/lu";
+import GroupCard from '../components/layout/GroupCard';
 import api from '../services/Api';
 import Loading from '../components/layout/Loading';
 import SubmitButton from '../components/form/SubmitButton';
@@ -43,7 +43,7 @@ const GroupListPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <p className="text-red-500 mb-4">{error}</p>
         <button
           onClick={() => window.location.reload()}
@@ -59,8 +59,9 @@ const GroupListPage = () => {
     <div className="min-h-screen bg-white px-1 py-4 overflow-y-auto pb-24">
       <div className="pb-4">
         <SubmitButton
-          classButton="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold"
+          classButton="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold"
           text="Criar Novo Grupo"
+          icon={<LuCirclePlus className="inline-block mr-2" />}
           onClick={handleCreateNewGroup}
         />
       </div>

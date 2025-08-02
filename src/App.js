@@ -12,6 +12,7 @@ import MySpending from './pages/MySpending';
 import GroupListPage from './pages/GroupListPage';
 import ExpenseDetails from './pages/ExpenseDetails';
 import AddUsersToExpense from './pages/AddUsersToExpense';
+import CreateGroup from './pages/CreateGroup';
 
 function App() {
   return (
@@ -49,6 +50,10 @@ function App() {
 
             <Route element={<PrivateLayout title={"Adicionar participante"} hideHeader={true} bottomNav={false} />}>
               <Route path="/add-users-to-expense" element={<AddUsersToExpense />} />
+            </Route>
+
+            <Route element={<PrivateLayout title={"Criar novo grupo"} hideHeader={true} />}>
+              <Route path="/create-group" element={<CreateGroup />} />
             </Route>
 
           </Route>

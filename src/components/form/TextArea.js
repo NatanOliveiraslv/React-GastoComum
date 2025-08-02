@@ -1,4 +1,4 @@
-const TextArea = ( {description, name, classText, classLabel, placeholder, onChange, value} ) => {
+const TextArea = ({ description, name, classText, classLabel, placeholder, onChange, value, subtitle }) => {
     return (
         <>
             <label className={classLabel}>{description}</label>
@@ -9,6 +9,11 @@ const TextArea = ( {description, name, classText, classLabel, placeholder, onCha
                 value={value}
                 onChange={onChange}
             />
+            {subtitle && (
+                <p className="text-xs text-gray-500">
+                    {subtitle}
+                </p>
+            )}
         </>
     )
 }
