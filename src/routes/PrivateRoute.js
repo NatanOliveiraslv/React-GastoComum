@@ -1,14 +1,19 @@
-import React from 'react';
-import { Navigate, Outlet  } from "react-router-dom";
-import { useAuth } from '../contexts/AuthContext' 
-import Loading from '../components/layout/Loading';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-export function PrivateRoute () {
-  const { isAuthenticated, loading } = useAuth();
+export function PrivateRoute() {
+  const { isAuthenticated, authInitialized } = useAuth();
 
-  if (loading) {
-    return <Loading />
+  // Enquanto o auth ainda está carregando (ex: lendo token do localStorage)
+  if (!authInitialized) {
+    return null; // Ou um componente de carregamento (ex: <Loading />)
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
+  // Se não estiver autenticado, redireciona para login
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Se estiver autenticado, libera as rotas internas
+  return <Outlet />;
 }

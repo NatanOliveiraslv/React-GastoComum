@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { LuSearch } from 'react-icons/lu';
+import { useNavigate, useLocation } from 'react-router-dom';
+import SearchButton from '../components/layout/SearchButton';
 import UserSelectCard from '../components/layout/UserSelectCard';
 import Loading from '../components/layout/Loading';
 import api from '../services/Api';
+import SubmitButton from '../components/form/SubmitButton';
 
 const AddUsersToExpense = () => {
-  const { expenseId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -94,16 +94,11 @@ const AddUsersToExpense = () => {
     <div className="min-h-screen bg-white px-1 py-4 overflow-y-auto pb-24">
 
       {/* Campo de Busca */}
-      <div className="relative mb-6">
-        <input
-          type="text"
-          placeholder="Buscar usuário..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-violet-500 focus:border-violet-500 shadow-sm"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-      </div>
+      <SearchButton
+        placeholder="Buscar usuário..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
       {/* Lista de Usuários */}
       <div className="flex-grow overflow-y-auto pr-2 -mr-2">
@@ -124,14 +119,11 @@ const AddUsersToExpense = () => {
       </div>
 
       {/* Botão de Confirmação Flutuante */}
-      <div className="sticky bottom-0 left-0 right-0 pt-4 pb-6 mt-4">
-        <button
-          onClick={handleConfirmParticipants}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md font-semibold"
-        >
-          Confirm Participants ({selectedUserIds.size})
-        </button>
-      </div>
+      <SubmitButton
+        onClick={handleConfirmParticipants}
+        classButton="bottom-10 fixed left-1/2 -translate-x-1/2 w-[90%] bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold z-50"
+        text={`Confirmar Participantes (${selectedUserIds.size})`}
+      />
     </div>
   );
 };

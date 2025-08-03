@@ -1,14 +1,29 @@
-import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useMemo
+} from 'react';
+
 import api from '../services/Api';
-import { jwtDecode } from 'jwt-decode'; 
-import { setAccessToken, setRefreshToken, removeAccessToken, removeRefreshToken, getAccessToken } from '../services/AuthClientStore'
+import { jwtDecode } from 'jwt-decode';
+import {
+  setAccessToken,
+  setRefreshToken,
+  removeAccessToken,
+  removeRefreshToken,
+  getAccessToken
+} from '../services/AuthClientStore';
+
 import Loading from '../components/layout/Loading';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Armazenará os dados do usuário do /api/user/me
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [authInitialized, setAuthInitialized] = useState(false); // Novo estado
 
   const saveTokens = useCallback((accessToken, refreshToken) => {
     setAccessToken(accessToken);
@@ -22,46 +37,43 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserDetails = useCallback(async () => {
     try {
-      const response = await api.get('/user/me'); 
-      setUser(response.data); 
+      const response = await api.get('/user/me');
+      setUser(response.data);
     } catch (error) {
       console.error("Falha ao buscar detalhes do usuário:", error);
       setUser(null);
       removeTokens();
-      throw error;
     }
   }, [removeTokens]);
 
   const decodeAndSetUser = useCallback(async (token) => {
-    if (typeof token === 'string' && token.length > 0) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp * 1000 < Date.now()) {
-          console.warn("Token expirado. Tentando refresh ou solicitando login novamente.");
-          setUser(null);
-          removeTokens();
-          return;
-        }
-
-        // Se o token é válido e não expirado, busque os detalhes completos do usuário
-        await fetchUserDetails(); // Chama a função que busca no backend
-      } catch (error) {
-        console.error("Falha ao decodificar ou validar token:", error);
-        setUser(null);
-        removeTokens();
-      }
-    } else {
+    if (!token) {
       setUser(null);
-      removeTokens(); // Remove tokens se o token for inválido/nulo
+      return;
     }
-  }, [fetchUserDetails, removeTokens]); // fetchUserDetails como dependência
+
+    try {
+      const decoded = jwtDecode(token);
+
+      // Se expirado, o interceptor do axios cuidará da renovação
+      if (decoded.exp * 1000 < Date.now()) {
+        console.warn("Token expirado. Interceptor tentará renovar.");
+      }
+
+      await fetchUserDetails(); // sempre buscamos os dados atualizados
+    } catch (error) {
+      console.error("Erro ao decodificar ou validar token:", error);
+      setUser(null);
+      removeTokens();
+    }
+  }, [fetchUserDetails, removeTokens]);
 
   const login = useCallback(async (credentials) => {
     try {
       const response = await api.post('/auth/sign-in', credentials);
       const { accessToken, refreshToken } = response.data;
       saveTokens(accessToken, refreshToken);
-      await decodeAndSetUser(accessToken); 
+      await decodeAndSetUser(accessToken);
       return true;
     } catch (error) {
       console.error("Falha no login:", error);
@@ -74,15 +86,7 @@ export const AuthProvider = ({ children }) => {
   const register = useCallback(async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
-      // Sua lógica atual é retornar true se o status for 200.
-      // Se o registro também retorna tokens e você quer logar o usuário automaticamente:
-      // if (response.data.accessToken && response.data.refreshToken) {
-      //   const { accessToken, refreshToken } = response.data;
-      //   saveTokens(accessToken, refreshToken);
-      //   await decodeAndSetUser(accessToken);
-      //   return true;
-      // }
-      if (response.status === 200 || response.status === 201) { 
+      if (response.status === 200 || response.status === 201) {
         return true;
       }
       return false;
@@ -92,43 +96,40 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const logout = useCallback(async () => { // Torne async para await o post
+  const logout = useCallback(async () => {
     try {
-      await api.post('/auth/logout'); // Envia o logout para o backend
+      await api.post('/auth/logout');
     } catch (error) {
-      console.error("Erro no logout do servidor:", error);
-      // Mesmo com erro no servidor, limpamos o estado local para deslogar o usuário
+      console.error("Erro no logout:", error);
     } finally {
       removeTokens();
       setUser(null);
     }
   }, [removeTokens]);
 
-  // Efeito principal para inicializar o estado de autenticação
   useEffect(() => {
     const initializeAuth = async () => {
-      setLoading(true);
-      const accessToken = getAccessToken();
-      if (accessToken) {
-        await decodeAndSetUser(accessToken); // Chama a função async
+      const token = getAccessToken();
+      if (token) {
+        await decodeAndSetUser(token);
       }
-      setLoading(false);
+      setAuthInitialized(true); // Só depois que o processo estiver completo
     };
 
     initializeAuth();
-  }, [decodeAndSetUser]); // Dependência: decodeAndSetUser
+  }, [decodeAndSetUser]);
 
-  const contextValue = React.useMemo(() => ({
+  const contextValue = useMemo(() => ({
     user,
-    loading, // loading para o estado inicial de autenticação
     login,
     logout,
     register,
-    isAuthenticated: !!user && !loading, // Considera autenticado se houver user e não estiver mais carregando
-  }), [user, loading, login, logout, register]);
+    isAuthenticated: !!user,
+    authInitialized, // <- novo: para só exibir a app quando estiver tudo pronto
+  }), [user, login, logout, register, authInitialized]);
 
-  if (loading) {
-    return <Loading />; // Exibe um componente de loading enquanto o AuthProvider está inicializando
+  if (!authInitialized) {
+    return <Loading />;
   }
 
   return (

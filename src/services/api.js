@@ -1,71 +1,106 @@
 import axios from 'axios';
-import { setAccessToken, setRefreshToken, removeAccessToken, removeRefreshToken, getAccessToken, getRefreshToken } from '../services/AuthClientStore'
+import {
+  getAccessToken,
+  setAccessToken,
+  getRefreshToken,
+  setRefreshToken,
+  removeAccessToken,
+  removeRefreshToken
+} from './AuthClientStore';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL
 });
 
-// Interceptor de Requisição: Anexar token de acesso
+// Variáveis de controle
+let isRefreshing = false;
+let failedQueue = [];
+
+// Helper para lidar com a fila de requisições
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// Interceptor de requisição — adiciona o token
 api.interceptors.request.use(
   (config) => {
-    const accessToken = getAccessToken();
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    const token = getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor de Resposta: Lidar com a renovação do token
+// Interceptor de resposta — tenta renovar o token ao receber 401
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Se o erro for 401 Não Autorizado e não for a própria requisição de refresh token
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Marca esta requisição como retentada
-
-      const refreshToken = getRefreshToken();
-      if (refreshToken) {
-        try {
-          const response = await axios.post('/auth/refresh-token', { refreshToken });
-          const { accessToken, newRefreshToken } = response.data;
-
-          setAccessToken(accessToken);
-          // Se o seu backend emitir um novo refresh token a cada renovação, salve-o
-          if (newRefreshToken) {
-            setRefreshToken(newRefreshToken);
-          }
-
-          // Atualiza o cabeçalho da requisição original com o novo token de acesso
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
-          // Tenta novamente a requisição original com o novo token
-          return api(originalRequest);
-        } catch (refreshError) {
-          console.error('Não foi possível renovar o token:', refreshError);
-          // Se a renovação falhar, desloga o usuário
-          removeAccessToken();
-          removeRefreshToken();
-          window.location.href = '/'; // Redireciona para a página de login
-          return Promise.reject(refreshError);
-        }
-      } else {
-        // Nenhum refresh token disponível, redireciona para o login
-        removeAccessToken()
-        removeRefreshToken()
-        window.location.href = '/';
-        return Promise.reject(error);
-      }
+    if (!error.response || error.response.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
     }
 
-    return Promise.reject(error);
+    originalRequest._retry = true;
+
+    if (isRefreshing) {
+      // Aguarda a renovação terminar e repete a requisição
+      return new Promise((resolve, reject) => {
+        failedQueue.push({
+          resolve: (token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(api(originalRequest));
+          },
+          reject: (err) => reject(err)
+        });
+      });
+    }
+
+    isRefreshing = true;
+
+    const refreshToken = getRefreshToken();
+
+    if (!refreshToken) {
+      removeAccessToken();
+      removeRefreshToken();
+      window.location.href = '/';
+      return Promise.reject(error);
+    }
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/refresh-token`, null, {
+        params: {
+          refreshToken: refreshToken
+        },
+      });
+      const { accessToken, newRefreshToken } = response.data;
+
+      setAccessToken(accessToken);
+      if (newRefreshToken) setRefreshToken(newRefreshToken);
+
+      processQueue(null, accessToken);
+
+      // Atualiza e reenvia a requisição original
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+      return api(originalRequest);
+    } catch (refreshError) {
+      processQueue(refreshError, null);
+      removeAccessToken();
+      removeRefreshToken();
+      window.location.href = '/';
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
+    }
   }
 );
 

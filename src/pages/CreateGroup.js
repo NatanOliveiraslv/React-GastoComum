@@ -22,13 +22,9 @@ const CreateGroup = () => {
     };
 
     const handleAddExpenseClick = () => {
-        // Lógica para adicionar uma despesa ao grupo
-        // Isso pode navegar para uma tela de criação de despesa,
-        // ou abrir um modal para selecionar despesas existentes.
-        // Por simplicidade, aqui apenas um console.log.
-        console.log("Adicionar Gasto ao Grupo clicado!");
-        // Exemplo: navigate('/add-expense-to-group', { state: { groupId: groupData.id } });
-        alert("Funcionalidade de 'Adicionar Gasto' a ser implementada.");
+        navigate('/add-expense-to-group', {
+            state: { initialSelectedIds: groupData.expenses.map(exp => exp.id) }
+        });
     };
 
     const handleCreateGroup = async (e) => {

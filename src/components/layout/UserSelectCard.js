@@ -1,6 +1,4 @@
-// src/components/UserSelectCard.js
-import React from 'react';
-import UserAvatar from './UserAvatar'; // Certifique-se do caminho correto
+import UserAvatar from './UserAvatar';
 
 const UserSelectCard = ({ user, isSelected, onToggleSelect }) => {
   return (

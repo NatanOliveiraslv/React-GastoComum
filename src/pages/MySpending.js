@@ -76,7 +76,7 @@ const MySpending = () => {
                 <button
                     className="fixed bottom-20 right-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-5 rounded-full shadow-lg z-50 flex items-center gap-2"
                 >
-                    <Link to={"/addExpense"}>
+                    <Link to={"/add-expense"}>
                         <span className="text-xl">＋</span>
                         Cadastrar Gasto
                     </Link>
