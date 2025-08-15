@@ -10,7 +10,6 @@ const AddExpensesToGroup = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [allExpenses, setAllExpenses] = useState([]);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const [selectedExpenseIds, setSelectedExpenseIds] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +20,6 @@ const AddExpensesToGroup = () => {
         api
             .get('/spending')
             .then(({ data }) => {
-                setAllExpenses(data.content);
                 setFilteredExpenses(data.content);
 
                 // Se houver IDs iniciais passados pelo state (do CreateGroup)
@@ -40,7 +38,7 @@ const AddExpensesToGroup = () => {
         const timeoutId = setTimeout(() => {
             // A requisição de busca deve ser para o endpoint correto e passar o searchTerm
             api
-                .get(`/spending?title=${searchTerm}`) // Assumindo que você busca por 'title'
+                .get(`/spending?title=${searchTerm}&containsGroup=false`) // Assumindo que você busca por 'title'
                 .then(({ data }) => {
                     setFilteredExpenses(data.content);
                 })

@@ -72,7 +72,7 @@ const AddUsersToExpense = () => {
 
     // 3. Navegar de volta para a tela de AddExpense, passando os IDs e nomes no state
     // O destino deve ser a rota exata da sua página AddExpense
-    navigate('/addExpense', {
+    navigate('/add-expense', {
       state: {
         selectedUsers: {
           selectedIds: selectedIdsArray,

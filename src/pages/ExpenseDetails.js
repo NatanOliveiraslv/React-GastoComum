@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LuTag, LuText, LuDollarSign, LuAlignLeft, LuCalendar, LuUsers, LuReceipt } from "react-icons/lu";
-import ExpenseDetailCard from '../components/layout/ExpenseDetailCard';
+import ExpenseDetailCard from '../components/layout/DetailCard';
 import UserAvatar from '../components/layout/UserAvatar';
 import api from '../services/Api'
 import Loading from '../components/layout/Loading';
