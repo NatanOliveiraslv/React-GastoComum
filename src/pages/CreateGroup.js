@@ -9,7 +9,8 @@ import Loading from '../components/layout/Loading';
 
 const CreateGroup = () => {
     const navigate = useNavigate();
-    const location = useLocation(); 
+    const location = useLocation();
+    const [selectedExpensesWithTitle, setSelectedExpensesWithTitle] = useState([]);
     const LOCAL_STORAGE_KEY = 'createGroupFormData';
 
     // 1. Inicialize o estado do formulário tentando carregar do localStorage
@@ -35,15 +36,17 @@ const CreateGroup = () => {
     // 3. Efeito para lidar com despesas selecionadas da tela AddExpensesToGroup
     useEffect(() => {
         if (location.state && location.state.selectedExpenses) {
-            const { selectedIds } = location.state.selectedExpenses;
+            const { selectedIds, selectedExpensesWithTitle } = location.state.selectedExpenses;
             setGroupData(prevGroupData => ({
                 ...prevGroupData,
                 spendingIds: selectedIds
             }));
 
+            setSelectedExpensesWithTitle(selectedExpensesWithTitle);
+
             navigate(location.pathname, { replace: true, state: {} });
         }
-    }, [location.state, navigate, location.pathname]); 
+    }, [location.state, navigate, location.pathname]);
 
     const handleChange = useCallback((e) => {
         setGroupData(prevGroupData => ({
@@ -55,9 +58,9 @@ const CreateGroup = () => {
     const handleAddExpenseClick = useCallback(() => {
         // Passa as despesas atualmente associadas ao grupo para a tela de seleção
         navigate('/add-expense-to-group', {
-            state: { initialSelectedIds: groupData.spendingIds }
+            state: { initialSelectedIds: selectedExpensesWithTitle }
         });
-    }, [navigate, groupData.spendingIds]);
+    }, [navigate, selectedExpensesWithTitle]);
 
 
     const handleCreateGroup = async (e) => {
@@ -122,32 +125,36 @@ const CreateGroup = () => {
                     </div>
                 </div>
 
-                {/* Botão "Add Gasto" */}
-                <button
-                    type="button"
-                    onClick={handleAddExpenseClick}
-                    className="w-full border border-gray-300 py-4 rounded-md flex pl-4 gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-6 "
-                >
-                    <LuSquarePlus className="text-xl" /> Adicionar Gasto
-                </button>
 
-                {/* Você pode exibir as despesas selecionadas aqui, se desejar */}
-                {groupData.spendingIds.length > 0 && (
-                    <div className="mb-6">
-                        <h3 className="text-md font-semibold text-gray-700 mb-2">Despesas Adicionadas:</h3>
-                        <ul className="list-disc list-inside text-sm text-gray-600">
-                            {groupData.spendingIds.map((expenseId, index) => (
-                                <li key={expenseId || index}>{`Despesa ID: ${expenseId}`}</li>
+                <div className="mb-6">
+                    <label className="block text-sm mb-1">Despesas Adicionadas:</label>
+                    {selectedExpensesWithTitle.length > 0 ? (
+                        <div className="flex flex-wrap gap-2 mb-2 p-2 border rounded-md bg-gray-50">
+                            {selectedExpensesWithTitle.map((expense, inex) => (
+                                <span key={inex} className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                    {expense.title}
+                                </span>
                             ))}
-                        </ul>
-                    </div>
-                )}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-gray-500 mb-2">Nenhum participante selecionado.</p>
+                    )}
+
+                    <button
+                        type="button"
+                        onClick={handleAddExpenseClick}
+                        className="w-full border border-gray-300 py-4 rounded-md flex pl-4 gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-6"
+                    >
+                        <LuSquarePlus className="text-xl" />
+                        {selectedExpensesWithTitle.length > 0 ? "Editar despesas" : "Adicionar despesas"}
+                    </button>
+                </div>
 
 
                 <SubmitButton
                     classButton="bottom-24 fixed left-1/2 -translate-x-1/2 w-[90%] bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold z-50"
                     text="Criar grupo"
-                    disabled={!groupData.name || loading} 
+                    disabled={!groupData.name || loading}
                 />
             </form>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {LuText, LuDollarSign, LuAlignLeft, LuUsers } from "react-icons/lu";
 import GroupDetailCard from '../components/layout/DetailCard';
 import api from '../services/Api'
@@ -9,7 +9,6 @@ import SubmitButton from '../components/form/SubmitButton';
 
 const GroupDetails = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
     const [group, setGroup] = useState(null);
     const [removeLoading, setRemoveLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -18,7 +17,7 @@ const GroupDetails = () => {
         setError(null);
         api.get(`/group/${id}`)
             .then(({ data }) => {
-                setGroup(data);    // ← dados já prontos
+                setGroup(data);
             })
             .catch((err) => {
                 console.error("Erro ao buscar grupo:", err);
@@ -48,7 +47,7 @@ const GroupDetails = () => {
                 </GroupDetailCard>
 
                 <GroupDetailCard icon={<LuDollarSign size={24} />} label="Valor Total">
-                    <p className="font-semibold text-blue-600"><FormattedValue value={group.totalValue} /></p> {/* Cor azul no valor */}
+                    <p className="font-semibold text-blue-600"><FormattedValue value={group.totalValue} /></p>
                 </GroupDetailCard>
 
                 <GroupDetailCard icon={<LuAlignLeft size={24} />} label="Descrição">

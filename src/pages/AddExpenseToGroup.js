@@ -18,7 +18,7 @@ const AddExpensesToGroup = () => {
 
     useEffect(() => {
         api
-            .get('/spending')
+            .get('/spending?containsGroup=false')
             .then(({ data }) => {
                 setFilteredExpenses(data.content);
 
@@ -63,14 +63,19 @@ const AddExpensesToGroup = () => {
         });
     };
 
-    const handleConfirmParticipants = () => {
-        const selectedIdsArray = Array.from(selectedExpenseIds);
-
-        // 3. Navegar de volta para a tela CreateGroup, passando os IDs no state
+    const handleConfirmExpenses = () => {
+        const selectedExpensesData = filteredExpenses.filter(expense =>
+            selectedExpenseIds.has(expense.id)
+        );
+        const formattedExpenses = selectedExpensesData.map(expense => ({
+            id: expense.id,
+            title: expense.title,
+        }));
         navigate('/create-group', {
             state: {
                 selectedExpenses: {
-                    selectedIds: selectedIdsArray,
+                    selectedIds: Array.from(selectedExpenseIds),
+                    selectedExpensesWithTitle: formattedExpenses, 
                 }
             }
         });
@@ -105,7 +110,7 @@ const AddExpensesToGroup = () => {
                         <ExpenseSelectCard
                             key={expense.id}
                             expense={expense}
-                            isSelected={selectedExpenseIds.has(expense.id)} 
+                            isSelected={selectedExpenseIds.has(expense.id)}
                             onToggleSelect={handleToggleSelect}
                         />
                     ))
@@ -114,7 +119,7 @@ const AddExpensesToGroup = () => {
 
             {/* Botão de Confirmação Flutuante */}
             <SubmitButton
-                onClick={handleConfirmParticipants}
+                onClick={handleConfirmExpenses}
                 classButton="bottom-10 fixed left-1/2 -translate-x-1/2 w-[90%] bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold z-50"
                 text={`Confirmar despesas (${selectedExpenseIds.size})`}
                 disabled={selectedExpenseIds.size === 0}
