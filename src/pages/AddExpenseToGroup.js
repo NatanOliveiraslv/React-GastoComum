@@ -10,6 +10,7 @@ const AddExpensesToGroup = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [allExpenses, setAllExpenses] = useState([]);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const [selectedExpenseIds, setSelectedExpenseIds] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState('');
@@ -20,6 +21,7 @@ const AddExpensesToGroup = () => {
         api
             .get('/spending?containsGroup=false')
             .then(({ data }) => {
+                setAllExpenses(data.content);
                 setFilteredExpenses(data.content);
 
                 // Se houver IDs iniciais passados pelo state (do CreateGroup)
@@ -36,9 +38,8 @@ const AddExpensesToGroup = () => {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            // A requisição de busca deve ser para o endpoint correto e passar o searchTerm
             api
-                .get(`/spending?title=${searchTerm}&containsGroup=false`) // Assumindo que você busca por 'title'
+                .get(`/spending?title=${searchTerm}&containsGroup=false`)
                 .then(({ data }) => {
                     setFilteredExpenses(data.content);
                 })
@@ -64,18 +65,15 @@ const AddExpensesToGroup = () => {
     };
 
     const handleConfirmExpenses = () => {
-        const selectedExpensesData = filteredExpenses.filter(expense =>
-            selectedExpenseIds.has(expense.id)
-        );
-        const formattedExpenses = selectedExpensesData.map(expense => ({
-            id: expense.id,
-            title: expense.title,
-        }));
+        const selectedIdsArray = Array.from(selectedExpenseIds);
+        const selectedTitlesArray = allExpenses
+            .filter(expense => selectedExpenseIds.has(expense.id))
+            .map(expense => expense.title);
         navigate('/create-group', {
             state: {
                 selectedExpenses: {
-                    selectedIds: Array.from(selectedExpenseIds),
-                    selectedExpensesWithTitle: formattedExpenses, 
+                    selectedIds: selectedIdsArray,
+                    selectedTitle: selectedTitlesArray,
                 }
             }
         });

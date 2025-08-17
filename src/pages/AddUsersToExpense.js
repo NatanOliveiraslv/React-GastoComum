@@ -42,6 +42,9 @@ const AddUsersToExpense = () => {
         .get(`/user?searchQuery=${searchTerm}`)
         .then(({ data }) => {
           setFilteredUsers(data.content);
+        })
+        .catch((err) => {
+          console.error("Erro ao buscar usuários:", err);
         });
     }, 500);
 
@@ -63,15 +66,10 @@ const AddUsersToExpense = () => {
   };
 
   const handleConfirmParticipants = () => {
-    // 1. Obter os IDs dos usuários selecionados
     const selectedIdsArray = Array.from(selectedUserIds);
-    // 2. Obter os nomes dos usuários selecionados (para exibição na tela AddExpense)
     const selectedNamesArray = allUsers
       .filter(user => selectedUserIds.has(user.id))
       .map(user => user.firstName);
-
-    // 3. Navegar de volta para a tela de AddExpense, passando os IDs e nomes no state
-    // O destino deve ser a rota exata da sua página AddExpense
     navigate('/add-expense', {
       state: {
         selectedUsers: {

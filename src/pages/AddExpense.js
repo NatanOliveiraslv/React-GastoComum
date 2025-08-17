@@ -38,6 +38,7 @@ const AddExpense = ({ expenseData }) => {
             return "Comida";
         }
     });
+    
     const [selectedParticipantIds, setSelectedParticipantIds] = useState(() => {
         // Tente carregar IDs dos participantes do localStorage
         try {
@@ -47,6 +48,7 @@ const AddExpense = ({ expenseData }) => {
             return [];
         }
     });
+
     const [selectedParticipantNames, setSelectedParticipantNames] = useState(() => {
         // Tente carregar nomes dos participantes do localStorage
         try {

@@ -7,63 +7,69 @@ import api from '../services/Api';
 import SubmitButton from '../components/form/SubmitButton';
 import Loading from '../components/layout/Loading';
 
-const CreateGroup = () => {
+const CreateGroup = ({ groupData }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [selectedExpensesWithTitle, setSelectedExpensesWithTitle] = useState([]);
-    const LOCAL_STORAGE_KEY = 'createGroupFormData';
-
-    // 1. Inicialize o estado do formulário tentando carregar do localStorage
-    const [groupData, setGroupData] = useState(() => {
-        try {
-            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            const initialData = savedData ? JSON.parse(savedData) : { name: '', description: '', spendingIds: [] };
-            return { ...initialData, spendingIds: initialData.spendingIds || [] };
-        } catch (error) {
-            console.error("Erro ao carregar dados do localStorage:", error);
-            return { name: '', description: '', spendingIds: [] };
-        }
-    });
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // 2. Efeito para salvar o estado do formulário no localStorage sempre que groupData mudar
-    useEffect(() => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(groupData));
-    }, [groupData]);
+    const LOCAL_STORAGE_KEY = 'createGroupFormData';
 
-    // 3. Efeito para lidar com despesas selecionadas da tela AddExpensesToGroup
+    // 1. Inicialize o estado do formulário tentando carregar do localStorage
+    const [group, setGroup] = useState(() => {
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            return savedData ? { ...groupData, ...JSON.parse(savedData) } : (groupData || {});
+
+        } catch (error) {
+            console.error("Erro ao carregar dados do localStorage:", error);
+            return groupData || {};
+        }
+    });
+
+
+    const [selectedExpensesIds, setSelectedExpensesIds] = useState(() => {
+        // Tente carregar IDs das despesas do localStorage
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            return savedData ? (JSON.parse(savedData).selectedExpensesIds || []) : [];
+        } catch (error) {
+            return [];
+        }
+    });
+
+    const [selectedExpensesTitle, setSelectedExpensesTitle] = useState(() => {
+        // Tente carregar IDs das despesas do localStorage
+        try {
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            return savedData ? (JSON.parse(savedData).selectedExpensesTitle || []) : [];
+        } catch (error) {
+            return [];
+        }
+    });
+
+
+    useEffect(() => {
+        const formDataToSave = {
+            ...group,
+            selectedExpensesIds,
+            selectedExpensesTitle
+        };
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formDataToSave));
+    }, [group, selectedExpensesIds, selectedExpensesTitle]);
+
     useEffect(() => {
         if (location.state && location.state.selectedExpenses) {
-            const { selectedIds, selectedExpensesWithTitle } = location.state.selectedExpenses;
-            setGroupData(prevGroupData => ({
-                ...prevGroupData,
-                spendingIds: selectedIds
-            }));
-
-            setSelectedExpensesWithTitle(selectedExpensesWithTitle);
+            const { selectedIds, selectedTitle } = location.state.selectedExpenses;
+            setSelectedExpensesIds(selectedIds);
+            setSelectedExpensesTitle(selectedTitle);
 
             navigate(location.pathname, { replace: true, state: {} });
         }
     }, [location.state, navigate, location.pathname]);
 
-    const handleChange = useCallback((e) => {
-        setGroupData(prevGroupData => ({
-            ...prevGroupData,
-            [e.target.name]: e.target.value
-        }));
-    }, []);
-
-    const handleAddExpenseClick = useCallback(() => {
-        // Passa as despesas atualmente associadas ao grupo para a tela de seleção
-        navigate('/add-expense-to-group', {
-            state: { initialSelectedIds: selectedExpensesWithTitle }
-        });
-    }, [navigate, selectedExpensesWithTitle]);
-
-
-    const handleCreateGroup = async (e) => {
+    const createGroup = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
@@ -81,6 +87,17 @@ const CreateGroup = () => {
         }
     };
 
+    const handleChange = useCallback((e) => {
+        setGroup(prevGroup => ({ ...prevGroup, [e.target.name]: e.target.value
+        }));
+    }, []);
+
+    const handleAddExpenseClick = useCallback(() => {
+        navigate('/add-expense-to-group', {
+            state: { initialSelectedIds: selectedExpensesIds }
+        });
+    }, [navigate, selectedExpensesIds]);
+
     if (loading) {
         return <Loading />;
     }
@@ -92,7 +109,7 @@ const CreateGroup = () => {
                     <span className="block sm:inline">{error}</span>
                 </div>
             )}
-            <form onSubmit={handleCreateGroup}>
+            <form onSubmit={createGroup}>
                 {/* Detalhes do Grupo */}
                 <div className="border rounded-xl shadow-sm p-4 mb-10">
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Detalhes do Grupo</h2>
@@ -103,11 +120,11 @@ const CreateGroup = () => {
                             type="text"
                             name="name"
                             placeholder="por exemplo, ferias, contas da família..."
-                            value={groupData.name}
+                            value={group.name || ''}
                             onChange={handleChange}
                             classLabel="block text-sm mb-1 text-gray-700"
                             classInput="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            subtitle="Give your group a memorable name."
+                            subtitle="Dê ao seu grupo um nome memorável."
                         />
                     </div>
 
@@ -116,11 +133,11 @@ const CreateGroup = () => {
                             description="Descrição do Grupo"
                             name="description"
                             placeholder="por exemplo, despesas para nossa viagem às montanhas..."
-                            value={groupData.description}
+                            value={group.description || ''}
                             onChange={handleChange}
                             classLabel="block text-sm mb-1 text-gray-700"
                             classText="h-32 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            subtitle="Briefly describe the purpose of this group."
+                            subtitle="Descreva brevemente o propósito deste grupo."
                         />
                     </div>
                 </div>
@@ -128,11 +145,11 @@ const CreateGroup = () => {
 
                 <div className="mb-6">
                     <label className="block text-sm mb-1">Despesas Adicionadas:</label>
-                    {selectedExpensesWithTitle.length > 0 ? (
+                    {selectedExpensesTitle.length > 0 ? (
                         <div className="flex flex-wrap gap-2 mb-2 p-2 border rounded-md bg-gray-50">
-                            {selectedExpensesWithTitle.map((expense, inex) => (
-                                <span key={inex} className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                    {expense.title}
+                            {selectedExpensesTitle.map((title, index) => (
+                                <span key={index} className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                    {title}
                                 </span>
                             ))}
                         </div>
@@ -146,7 +163,7 @@ const CreateGroup = () => {
                         className="w-full border border-gray-300 py-4 rounded-md flex pl-4 gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-6"
                     >
                         <LuSquarePlus className="text-xl" />
-                        {selectedExpensesWithTitle.length > 0 ? "Editar despesas" : "Adicionar despesas"}
+                        {selectedExpensesTitle.length > 0 ? "Editar despesas" : "Adicionar despesas"}
                     </button>
                 </div>
 
@@ -154,7 +171,7 @@ const CreateGroup = () => {
                 <SubmitButton
                     classButton="bottom-24 fixed left-1/2 -translate-x-1/2 w-[90%] bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold z-50"
                     text="Criar grupo"
-                    disabled={!groupData.name || loading}
+                    disabled={!group.name || loading}
                 />
             </form>
         </div>
