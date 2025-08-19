@@ -36,11 +36,11 @@ function BottomNav() {
         </NavLink>
 
         <NavLink
-          to="/expenses"
+          to="/expenses-divided-accounts"
           className={({ isActive }) => `${linkClass} ${isActive ? activeClass : ""}`}
         >
           <BiUser size={24} />
-          <span className="text-[10px] sm:text-xs">Minhas despesas</span>
+          <span className="text-[10px] sm:text-xs">Estou devendo</span>
         </NavLink>
       </div>
     </nav>

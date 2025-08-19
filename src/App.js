@@ -15,6 +15,7 @@ import AddUsersToExpense from './pages/AddUsersToExpense';
 import CreateGroup from './pages/CreateGroup';
 import AddExpenseToGroup from './pages/AddExpenseToGroup';
 import GroupDetails from './pages/GroupDetails';
+import MyDebts from './pages/MyDebts';
 
 function AppRoutes() {
   const { authInitialized } = useAuth();
@@ -64,6 +65,10 @@ function AppRoutes() {
 
         <Route element={<PrivateLayout title="Criar novo grupo" hideHeader={true} />}>
           <Route path="/create-group" element={<CreateGroup />} />
+        </Route>
+
+        <Route element={<PrivateLayout title="Estou devendo" hideHeader={true} />}>
+          <Route path="/expenses-divided-accounts" element={<MyDebts />} />
         </Route>
 
         <Route element={<PrivateLayout title="Adicionar despesas ao grupo" hideHeader={true} bottomNav={false}/>}>
