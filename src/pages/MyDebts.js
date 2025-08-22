@@ -41,9 +41,9 @@ const MyDebts = () => {
       {/* Pagamentos Pendente */}
       <div className="bg-[#E5E7F8] rounded-xl p-6 text-center mb-6 border-[#CCCEF5] border-2 ">
         <p className="text-[#E8618C] text-xl font-bold text-left">Pagamentos Pendentes</p>
-        <p className="text-sm text-gray-400 text-left">Seu resumo de débitos</p>
+        <p className="text-sm text-gray-500 text-left">Seu resumo de débitos</p>
         <p className="text-5xl font-bold text-[#E8618C] mt-4"><FormattedValue value={total} /></p>
-        <p className="text-sm text-gray-400">Total pendente em suas despesas</p>
+        <p className="text-sm text-gray-500">Total pendente em suas despesas</p>
         {/*
         <button className="mt-3 bg-pink-500 text-white py-2 px-4 rounded-lg w-full">
           Pagar Tudo Agora
@@ -57,29 +57,54 @@ const MyDebts = () => {
         <a href="teste" className="text-pink-500 text-sm">Ver Todas</a>
       </div>
 
-
       {expenses.length === 0 ? (
         <p className="text-center text-gray-500 mt-8">Nenhuma despesa encontrada.</p>
       ) : (
         expenses.map((exp) => (
-          <div key={exp.id} className="bg-gray-50 rounded-xl p-4 mb-3 shadow-sm">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-3">
-                <GetIconType type={exp.spendingType} />
-                <div>
-                  <p className="font-medium">{exp.spendingTitle}</p>
-                  <p className="text-xs text-gray-500">{exp.spendingDescription}</p>
-                  <p className="text-blue-600 font-bold mt-1"><FormattedValue value={exp.value} /></p>
-                  <p className="text-xs text-gray-400">{new Date(exp.spendingDate).toLocaleDateString()}</p>
-                  <p className="text-xs text-gray-500 mt-1">Participantes: {exp.spendingParticipantsIds}</p>
+          <div className="space-y-4">
+            <div key={exp.id} className="border  bg-white rounded-lg p-4 shadow-sm flex flex-col space-y-2">
+              <div className="flex items-center space-x-4">
+                <div className="bg-indigo-100 p-2 rounded-full text-indigo-600">
+                  <GetIconType type={exp.spendingType} />
+                </div>
+
+                <div className="flex-grow">
+                  <h3 className="font-medium text-lg">{exp.spendingTitle}</h3>
+                  <p className="text-gray-500 text-sm">{exp.spendingDescription}</p>
                 </div>
               </div>
-              <button className="bg-pink-500 text-white px-4 py-1 rounded-lg">Pagar</button>
+
+              <div className="flex justify-between pt-2 pb-2">
+                <div className="text-right">
+                  <p className="font-bold text-[#636AE8] text-2xl"><FormattedValue value={exp.value} /></p>
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-500 text-sm">{new Date(exp.spendingDate).toLocaleDateString()}</p>
+                </div>
+              </div>
+
+              <div className="flex justify-between pt-2 pb-2">
+                <div className="flex items-center text-sm text-gray-700 space-x-2">
+                  <span className='font-medium'>Participantes:</span>
+                  {/*exp.spendingParticipantsIds*/}
+                  <div className="w-6 h-6 rounded-full bg-indigo-200"></div>
+                  <div className="w-6 h-6 rounded-full bg-indigo-200"></div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                <button className="text-gray-500 text-xs font-semibold p-2.5 px-5 border rounded-lg hover:bg-pink-600 transition duration-300">
+                  &gt; Ver Detalhes
+                </button>
+                <button className="bg-[#E8618C] text-white text-xs font-semibold p-3 px-5 rounded-full hover:bg-pink-600 transition duration-300">
+                  Pagar
+                </button>
+              </div>
             </div>
           </div>
         ))
       )}
-    </div>
+    </div >
   );
 };
 
