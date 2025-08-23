@@ -86,7 +86,7 @@ const MySpending = () => {
 
             {!removeLoading && <Loading />}
             {removeLoading && expenses.length === 0 && (
-                <p>Não há projetos cadastrados!</p>
+                <p className="text-center text-gray-500 mt-8">Nenhum gasto encontrado! <br/> Cadastre clicando no botão abaixo.</p>
             )}
 
         </div>

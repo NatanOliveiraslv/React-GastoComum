@@ -28,7 +28,6 @@ const CreateGroup = ({ groupData }) => {
         }
     });
 
-
     const [selectedExpensesIds, setSelectedExpensesIds] = useState(() => {
         // Tente carregar IDs das despesas do localStorage
         try {
@@ -74,8 +73,10 @@ const CreateGroup = ({ groupData }) => {
         setLoading(true);
         setError(null);
 
+        const groupWithExpenses = { ...group, spendingIds: selectedExpensesIds };
+        
         try {
-            const response = await api.post('/group', groupData);
+            const response = await api.post('/group', groupWithExpenses);
             console.log('Grupo criado com sucesso:', response.data);
             localStorage.removeItem(LOCAL_STORAGE_KEY);
             navigate('/groups', { state: { message: 'Grupo criado com sucesso!' } })

@@ -3,6 +3,7 @@ import api from '../services/Api';
 import Loading from '../components/layout/Loading';
 import FormattedValue from '../components/layout/FormattedValue';
 import GetIconType from '../components/layout/GetIconType';
+import FormattedDate from '../components/layout/FormattedDate';
 
 
 const MyDebts = () => {
@@ -16,8 +17,7 @@ const MyDebts = () => {
     api.get(`/expenses-divided-accounts`)
       .then(({ data }) => {
         setExpenses(data.content);
-        //const sum = response.data.reduce((acc, item) => acc + parseFloat(item.value), 0);
-        setTotal(1000);
+        setTotal(data.content.reduce((acc, item) => acc + parseFloat(item.value), 0));
       })
       .catch(err => {
         console.error("Erro ao carregar suas dividas:", err);
@@ -53,15 +53,14 @@ const MyDebts = () => {
 
       {/* Lista de Despesas */}
       <div className="flex justify-between items-center mb-3">
-        <h2 className="font-semibold text-lg">Despesas Detalhadas</h2>
-        <a href="teste" className="text-pink-500 text-sm">Ver Todas</a>
+        <h2 className="font-medium text-base">Despesas Detalhadas</h2>
       </div>
 
-      {expenses.length === 0 ? (
-        <p className="text-center text-gray-500 mt-8">Nenhuma despesa encontrada.</p>
-      ) : (
-        expenses.map((exp) => (
-          <div className="space-y-4">
+      <div className="space-y-4">
+        {expenses.length === 0 ? (
+          <p className="text-center text-gray-500 mt-8">Nenhuma despesa encontrada.</p>
+        ) : (
+          expenses.map((exp) => (
             <div key={exp.id} className="border  bg-white rounded-lg p-4 shadow-sm flex flex-col space-y-2">
               <div className="flex items-center space-x-4">
                 <div className="bg-indigo-100 p-2 rounded-full text-indigo-600">
@@ -79,21 +78,27 @@ const MyDebts = () => {
                   <p className="font-bold text-[#636AE8] text-2xl"><FormattedValue value={exp.value} /></p>
                 </div>
                 <div className="text-right">
-                  <p className="text-gray-500 text-sm">{new Date(exp.spendingDate).toLocaleDateString()}</p>
+                  <p className="text-gray-500 text-sm"><FormattedDate date={exp.spendingDate} /></p>
                 </div>
               </div>
 
               <div className="flex justify-between pt-2 pb-2">
                 <div className="flex items-center text-sm text-gray-700 space-x-2">
                   <span className='font-medium'>Participantes:</span>
-                  {/*exp.spendingParticipantsIds*/}
-                  <div className="w-6 h-6 rounded-full bg-indigo-200"></div>
-                  <div className="w-6 h-6 rounded-full bg-indigo-200"></div>
+                  <div className="flex items-center">
+                    {exp.spendingParticipantsIds.map((id, index) => (
+                      <div
+                        key={index}
+                        className={`w-8 h-8 rounded-full bg-indigo-200 bg-cover bg-center ${index > 0 ? '-ml-2' : ''}`}
+                        style={{ backgroundImage: `url(${process.env.REACT_APP_BASE_URL}/user/profile-picture/download/${id})` }}
+                      ></div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                <button className="text-gray-500 text-xs font-semibold p-2.5 px-5 border rounded-lg hover:bg-pink-600 transition duration-300">
+                <button className="text-gray-500 text-xs font-semibold p-2.5 px-5 border rounded-lg hover:bg-pink-600 hover:text-white transition duration-300">
                   &gt; Ver Detalhes
                 </button>
                 <button className="bg-[#E8618C] text-white text-xs font-semibold p-3 px-5 rounded-full hover:bg-pink-600 transition duration-300">
@@ -101,9 +106,10 @@ const MyDebts = () => {
                 </button>
               </div>
             </div>
-          </div>
-        ))
-      )}
+
+          ))
+        )}
+      </div>
     </div >
   );
 };
