@@ -63,8 +63,8 @@ const MyDebts = () => {
           expenses.map((exp) => (
             <div key={exp.id} className="border  bg-white rounded-lg p-4 shadow-sm flex flex-col space-y-2">
               <div className="flex items-center space-x-4">
-                <div className="bg-indigo-100 p-2 rounded-full text-indigo-600">
-                  <GetIconType type={exp.spendingType} />
+                <div className="bg-indigo-100 p-2 rounded-full text-[#636AE8]">
+                  <GetIconType type={exp.spendingType}/>
                 </div>
 
                 <div className="flex-grow">

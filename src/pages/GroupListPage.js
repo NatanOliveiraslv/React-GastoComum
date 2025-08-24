@@ -15,7 +15,6 @@ const GroupListPage = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        setLoading(true);
         const response = await api.get('/group');
         setGroups(response.data.content);
       } catch (err) {

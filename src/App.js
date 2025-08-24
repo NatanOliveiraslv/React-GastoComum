@@ -31,7 +31,7 @@ function AppRoutes() {
 
       {/* Rotas Protegidas */}
       <Route element={<PrivateRoute />}>
-        <Route element={<PrivateLayout title="Home" />}>
+        <Route element={<PrivateLayout title="Início" />}>
           <Route path="/home" element={<Home />} />
         </Route>
 
