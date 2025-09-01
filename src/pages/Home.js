@@ -67,7 +67,7 @@ const Home = () => {
                                 className="w-12 rounded-t"
                                 style={{ height: `${(cat.amount / 4) * 200}px`, backgroundColor: "#6C63FF" }}
                             ></div>
-                            <span className="text-xs text-gray-600 mt-2">{cat.name}</span>
+                            <span className="text-xs text-gray-600 mt-2">{cat.type}</span>
                         </div>
                     ))}
                 </div>
@@ -81,7 +81,7 @@ const Home = () => {
                         {recentSpending.map((expense) => (
                             <div key={expense.id} className="flex items-center space-x-4">
                                 <div className="bg-slate-50 p-2 rounded-full text-blue-500">
-                                    <GetIconType type={expense.type} />
+                                    <GetIconType type={expense.enumType} />
                                 </div>
                                 <div className="flex-grow">
                                     <h3 className="font-medium text-base">{expense.title}</h3>
@@ -103,7 +103,7 @@ const Home = () => {
                     <div className="space-y-10 mt-8">
                         {recentDebts.map((debts) => (
                             <div key={debts.id} className="flex items-center space-x-4">
-                                <div className="bg-slate-50 p-2 rounded-full text-blue-500">
+                                <div className="bg-slate-50 p-2 rounded-full text-[#A855F7]">
                                     <GetIconType type={debts.spendingType} />
                                 </div>
                                 <div className="flex-grow">

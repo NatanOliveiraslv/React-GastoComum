@@ -26,6 +26,10 @@ function Login() {
     }
   };
 
+  const loginWithGoogle = () => {
+    window.location.href = `${process.env.REACT_APP_OAUTH_BACKEND_URL}`;
+  } 
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-none sm:bg-gray-100 ">
       <div className="bg-white bg-none sm:shadow-md rounded-xl p-8 w-full max-w-md">
@@ -97,6 +101,7 @@ function Login() {
           {/* Google Sign-in */}
           <button
             type="button"
+            onClick={loginWithGoogle}
             className="w-full border border-gray-300 flex items-center justify-center gap-2 py-2 rounded-md hover:bg-gray-100"
           >
             <FcGoogle size={20} />

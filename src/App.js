@@ -16,6 +16,7 @@ import CreateGroup from './pages/CreateGroup';
 import AddExpenseToGroup from './pages/AddExpenseToGroup';
 import GroupDetails from './pages/GroupDetails';
 import MyDebts from './pages/MyDebts';
+import LoginOauthSuccess from './pages/LoginOauthSuccess';
 
 function AppRoutes() {
   const { authInitialized } = useAuth();
@@ -28,6 +29,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/register" element={<Register />} />
       <Route path="/" element={<Login />} />
+      <Route path='/login-success' element={<LoginOauthSuccess />} />
 
       {/* Rotas Protegidas */}
       <Route element={<PrivateRoute />}>
