@@ -17,6 +17,7 @@ import AddExpenseToGroup from './pages/AddExpenseToGroup';
 import GroupDetails from './pages/GroupDetails';
 import MyDebts from './pages/MyDebts';
 import LoginOauthSuccess from './pages/LoginOauthSuccess';
+import NotFoundPage from './pages/NotFoundPage';
 
 function AppRoutes() {
   const { authInitialized } = useAuth();
@@ -77,9 +78,11 @@ function AppRoutes() {
           <Route path="/add-expense-to-group" element={<AddExpenseToGroup />} />
         </Route>  
 
-      </Route>
+        <Route element={<PrivateLayout title="Pagina não encontrada"/>}>
+         <Route path="*" element={< NotFoundPage />}/>
+        </Route>
 
-      {/* <Route path="*" element={<NotFoundPage />} /> */}
+      </Route>
     </Routes>
   );
 }

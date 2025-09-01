@@ -124,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     register,
+    decodeAndSetUser, // exposto para forçar atualização do usuário após OAuth
     isAuthenticated: !!user,
     authInitialized, // <- novo: para só exibir a app quando estiver tudo pronto
   }), [user, login, logout, register, authInitialized]);

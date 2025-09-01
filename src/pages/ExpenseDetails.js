@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { LuTag, LuText, LuDollarSign, LuAlignLeft, LuCalendar, LuUsers, LuReceipt } from "react-icons/lu";
 import ExpenseDetailCard from '../components/layout/DetailCard';
 import UserAvatar from '../components/layout/UserAvatar';
@@ -11,7 +11,6 @@ import SubmitButton from '../components/form/SubmitButton';
 
 const ExpenseDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [expense, setExpense] = useState(null);
   const [removeLoading, setRemoveLoading] = useState(false);
   const [error, setError] = useState(null);

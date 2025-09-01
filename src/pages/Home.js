@@ -7,7 +7,7 @@ import FormattedDate from '../components/layout/FormattedDate';
 
 const Home = () => {
     const [totalExpense, setTotalExpense] = useState(0);
-    const [spendingLimit, setSpendingLimit] = useState(1500);
+    const [spendingLimit] = useState(1500);
     const [categoriesData, setCategoriesData] = useState([]);
     const [recentSpending, setRecentSpending] = useState([]);
     const [recentDebts, setRecentDebts] = useState([]);
@@ -43,7 +43,7 @@ const Home = () => {
             <div className="bg-white border p-6 rounded-lg shadow-sm">
                 <h2 className="text-gray-900 text-lg mb-5 font-semibold">Gasto Total do Mês</h2>
                 <p className="text-4xl font-bold text-indigo-600 mt-1"><FormattedValue value={totalExpense} /></p>
-                <div className="text-sm text-gray-500 mt-2">
+                {/* <div className="text-sm text-gray-500 mt-2">
                     do limite de R$ {spendingLimit.toFixed(2)}
                 </div>
                 <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
@@ -54,15 +54,15 @@ const Home = () => {
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
                     Excelente! Parece que o orçamento está sendo gerido de forma eficiente este mês.
-                </p>
+                </p> */}
             </div>
 
             {/* Despesas por Categoria */}
             <div className="bg-white border p-6 rounded-lg shadow-sm">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Despesas por Categoria</h2>
                 <div className="flex justify-around items-end h-52">
-                    {categoriesData.map(cat => (
-                        <div key={cat.name} className="flex flex-col items-center">
+                    {categoriesData.map((cat, index) => (
+                        <div key={index} className="flex flex-col items-center">
                             <div
                                 className="w-12 rounded-t"
                                 style={{ height: `${(cat.amount / 4) * 200}px`, backgroundColor: "#6C63FF" }}
@@ -78,8 +78,8 @@ const Home = () => {
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">Meus Gastos Recentes</h2>
                 {recentSpending.length > 0 ? (
                     <div className="space-y-10 mt-8">
-                        {recentSpending.map((expense) => (
-                            <div key={expense.id} className="flex items-center space-x-4">
+                        {recentSpending.map((expense, index) => (
+                            <div key={index} className="flex items-center space-x-4">
                                 <div className="bg-slate-50 p-2 rounded-full text-blue-500">
                                     <GetIconType type={expense.enumType} />
                                 </div>

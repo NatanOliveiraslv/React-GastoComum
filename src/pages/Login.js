@@ -22,7 +22,7 @@ function Login() {
       navigate('/home');
     } catch (error) {
       console.error(error);
-      setErro("Login ou senha inválidos.");
+      setErro("E-mail ou senha inválidos.");
     }
   };
 

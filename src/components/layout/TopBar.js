@@ -9,7 +9,7 @@ function TopBar({ title = "Gasto Comum" }) {
   const profilePictureUrl = `${process.env.REACT_APP_BASE_URL}/user/profile-picture/download/${user.id}`
   
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b">
+    <header className="flex items-center justify-between px-4 py-3 border-b">
       <h1 className="text-sm flex-1 text-center -ml-6">{title}</h1>
       <button onClick={() => navigate(-1)} className="absolute left-4 flex items-center space-x-4">
         <IoChevronBack />
@@ -25,7 +25,7 @@ function TopBar({ title = "Gasto Comum" }) {
         </div>
       </div>
 
-    </div>
+    </header>
   );
 }
 

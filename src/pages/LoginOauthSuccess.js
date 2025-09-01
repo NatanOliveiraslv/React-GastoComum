@@ -1,36 +1,46 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
-  setAccessToken,
-  setRefreshToken
+    setAccessToken,
+    setRefreshToken
 } from "../services/AuthClientStore";
+import Loading from "../components/layout/Loading";
 
 export default function LoginOauthSuccess() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { decodeAndSetUser, isAuthenticated } = useAuth();
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const accessToken = params.get("accessToken");
-    const refreshToken = params.get("refreshToken");
-
-    if (accessToken && refreshToken) {
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
-
-      // redireciona para dashboard/home
-      navigate("/home", { replace: true });
-    } else {
-      console.error("Falha na autenticação. Token não encontrado.");
-      navigate("/", { replace: true });
+     if (loading) {
+        <Loading />;
     }
-  }, [location, navigate]);
 
-  if (isAuthenticated) {
-    return null; // evita flicker
-  }
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const accessToken = params.get("accessToken");
+        const refreshToken = params.get("refreshToken");
 
-  return <p>Processando login...</p>;
+        if (accessToken && refreshToken) {
+            setAccessToken(accessToken);
+            setRefreshToken(refreshToken);
+
+            // força o contexto a setar o usuário agora
+            decodeAndSetUser(accessToken);
+
+            // só navega depois de ter atualizado o contexto
+            navigate("/home", { replace: true });
+            setLoading(false);
+        } else {
+            console.error("Falha na autenticação. Token não encontrado.");
+            navigate("/", { replace: true });
+        }
+    }, [location, navigate, decodeAndSetUser]);
+
+    if (isAuthenticated) {
+        return null; // evita flicker
+    }
+
+    return <p>Processando login...</p>;
 }
