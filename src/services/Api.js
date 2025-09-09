@@ -2,14 +2,12 @@ import axios from 'axios';
 import {
   getAccessToken,
   setAccessToken,
-  getRefreshToken,
-  setRefreshToken,
   removeAccessToken,
-  removeRefreshToken
 } from './AuthClientStore';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL
+  baseURL: process.env.REACT_APP_BASE_URL,
+  withCredentials: true
 });
 
 // Variáveis de controle
@@ -67,26 +65,14 @@ api.interceptors.response.use(
 
     isRefreshing = true;
 
-    const refreshToken = getRefreshToken();
-
-    if (!refreshToken) {
-      removeAccessToken();
-      removeRefreshToken();
-      window.location.href = '/';
-      return Promise.reject(error);
-    }
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/refresh-token`, null, {
-        params: {
-          refreshToken: refreshToken
-        },
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/auth/refresh-token`, {}, {
+        withCredentials: true
       });
-      const { accessToken, newRefreshToken } = response.data;
+      const { accessToken } = response.data;
 
       setAccessToken(accessToken);
-      if (newRefreshToken) setRefreshToken(newRefreshToken);
-
       processQueue(null, accessToken);
 
       // Atualiza e reenvia a requisição original
@@ -95,7 +81,6 @@ api.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null);
       removeAccessToken();
-      removeRefreshToken();
       window.location.href = '/';
       return Promise.reject(refreshError);
     } finally {

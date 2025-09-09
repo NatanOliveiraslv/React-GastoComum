@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
     setAccessToken,
-    setRefreshToken
 } from "../services/AuthClientStore";
 import Loading from "../components/layout/Loading";
 
@@ -20,11 +19,9 @@ export default function LoginOauthSuccess() {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const accessToken = params.get("accessToken");
-        const refreshToken = params.get("refreshToken");
 
-        if (accessToken && refreshToken) {
+        if (accessToken) {
             setAccessToken(accessToken);
-            setRefreshToken(refreshToken);
 
             // força o contexto a setar o usuário agora
             decodeAndSetUser(accessToken);

@@ -11,9 +11,7 @@ import api from '../services/Api';
 import { jwtDecode } from 'jwt-decode';
 import {
   setAccessToken,
-  setRefreshToken,
   removeAccessToken,
-  removeRefreshToken,
   getAccessToken
 } from '../services/AuthClientStore';
 
@@ -25,14 +23,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [authInitialized, setAuthInitialized] = useState(false); // Novo estado
 
-  const saveTokens = useCallback((accessToken, refreshToken) => {
+  const saveTokens = useCallback((accessToken) => {
     setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
   }, []);
 
   const removeTokens = useCallback(() => {
     removeAccessToken();
-    removeRefreshToken();
   }, []);
 
   const fetchUserDetails = useCallback(async () => {
@@ -71,8 +67,8 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (credentials) => {
     try {
       const response = await api.post('/auth/sign-in', credentials);
-      const { accessToken, refreshToken } = response.data;
-      saveTokens(accessToken, refreshToken);
+      const { accessToken } = response.data;
+      saveTokens(accessToken);
       await decodeAndSetUser(accessToken);
       return true;
     } catch (error) {
