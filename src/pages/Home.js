@@ -7,7 +7,7 @@ import FormattedDate from '../components/layout/FormattedDate';
 
 const Home = () => {
     const [totalExpense, setTotalExpense] = useState(0);
-    const [spendingLimit] = useState(1500);
+    //const [spendingLimit] = useState(1500);
     const [categoriesData, setCategoriesData] = useState([]);
     const [recentSpending, setRecentSpending] = useState([]);
     const [recentDebts, setRecentDebts] = useState([]);
